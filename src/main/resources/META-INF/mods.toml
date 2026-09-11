@@ -1,0 +1,33 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="LGPLv3"
+
+[[mods]]
+modId="enchantworks"
+version="${file.jarVersion}"
+displayName="Enchant Works"
+authors="XYAT"
+description='''
+Expanded enchantment and anvil mechanics.
+'''
+
+[[dependencies.enchantworks]]
+modId="forge"
+mandatory=true
+versionRange="[47,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.enchantworks]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.20.1,1.21)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.enchantworks]]
+modId="kineticcore"
+mandatory=true
+versionRange="[26.9.8,)"
+ordering="AFTER"
+side="BOTH"

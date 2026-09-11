@@ -1,0 +1,25 @@
+{
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_17",
+  "package": "dev.xyat.enchantworks.enchantment.mixin",
+  "refmap": "enchantworks.mixins.refmap.json",
+  "mixins": [
+    "InfinityBucketMixins$BucketItemFix",
+    "InfinityBucketMixins$EnchantmentFix",
+    "InfinityBucketMixins$FluidBucketWrapperFix",
+    "InfinityBucketMixins$ItemFix",
+    "InfinityBucketMixins$ItemStackFix",
+    "InfinityBucketMixins$ItemUtilsFix",
+    "ItemAndBlockBehaviorMixin$BlockFix",
+    "ItemAndBlockBehaviorMixin$BowItemFix",
+    "ItemAndBlockBehaviorMixin$EnchantmentHelperFix",
+    "ItemAndBlockBehaviorMixin$EnchantmentMenuFix",
+    "ItemAndBlockBehaviorMixin$ItemStackFix",
+    "ItemAndBlockBehaviorMixin$ServerPlayerGameModeFix",
+    "ItemAndBlockBehaviorMixin$SpawnerBlockFix",
+    "ItemAndBlockBehaviorMixin$ThrownTridentFix"
+  ],
+  "client": [
+    "client.EntityGlowingMixin"
+  ]
+}
