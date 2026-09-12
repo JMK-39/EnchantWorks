@@ -18,14 +18,12 @@ The project is designed around in-game administration. Where a feature changes s
 - Gameplay enchantments including Smelter, Leech, Sixth Sense, Enlightenment and Omni Tool.
 - Server-authoritative rules exposed through KineticCore configuration.
 
-### Requirements and Compatibility
+### Dependencies
 
 | Type | Dependency |
 |---|---|
-| Required | Minecraft 1.20.1 |
-| Required | Minecraft Forge 47+ |
+| Required | Forge 47.4.0+ |
 | Required | KineticCore 26.9.8+ |
-| Optional | None |
 
 ### Access and Configuration
 
@@ -302,14 +300,12 @@ Primary configuration/data paths:
 - 包含熔炼、汲取、第六感、启蒙、万能工具等玩法附魔。
 - 规则由服务端权威处理，并通过 KineticCore 配置系统管理。
 
-### 运行环境与兼容
+### 依赖
 
 | 类型 | 依赖 |
 |---|---|
-| 必需 | Minecraft 1.20.1 |
-| 必需 | Minecraft Forge 47+ |
+| 必需 | Forge 47.4.0+ |
 | 必需 | KineticCore 26.9.8+ |
-| 可选 | 无 |
 
 ### 打开方式与配置
 
