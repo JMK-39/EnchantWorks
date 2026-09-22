@@ -1,8 +1,8 @@
 package dev.xyat.enchantworks.anvil.config;
 
-import dev.xyat.kineticcore.config.client.KTConfigApi;
-import dev.xyat.kineticcore.config.client.KTConfigPage;
-import dev.xyat.kineticcore.config.client.KTConfigScope;
+import dev.xyat.kineticcore.api.config.client.KTConfigApi;
+import dev.xyat.kineticcore.api.config.client.KTConfigPage;
+import dev.xyat.kineticcore.api.config.client.KTConfigScope;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
@@ -61,7 +61,7 @@ public final class AnvilEnchantmentConfigGui {
                         () -> AnvilEnchantmentConfig.enableTaxFreeLevels,
                         value -> AnvilEnchantmentConfig.enableTaxFreeLevels = value, true,
                         Component.translatable("cfg.enchantworks.tax_free.enable.tooltip"))
-                .intValue("tax_free_level_base", Component.translatable("cfg.enchantworks.tax_free.level_base"),
+                .intValueUnbounded("tax_free_level_base", Component.translatable("cfg.enchantworks.tax_free.level_base"),
                         () -> AnvilEnchantmentConfig.taxFreeLevelBase,
                         value -> AnvilEnchantmentConfig.taxFreeLevelBase = value, 30,
                         Component.translatable("cfg.enchantworks.tax_free.level_base.tooltip"))
@@ -122,7 +122,7 @@ public final class AnvilEnchantmentConfigGui {
                         () -> AnvilEnchantmentConfig.smelterCooksMobs,
                         value -> AnvilEnchantmentConfig.smelterCooksMobs = value, true,
                         Component.translatable("cfg.enchantworks.values.smelter_mobs.tooltip"))
-                .doubleValue("smelter_exp_multiplier", Component.translatable("cfg.enchantworks.values.smelter_exp"),
+                .doubleValueUnbounded("smelter_exp_multiplier", Component.translatable("cfg.enchantworks.values.smelter_exp"),
                         () -> AnvilEnchantmentConfig.smelterExpMultiplier,
                         value -> AnvilEnchantmentConfig.smelterExpMultiplier = value, 1.0,
                         Component.translatable("cfg.enchantworks.values.smelter_exp.tooltip"))
@@ -145,7 +145,7 @@ public final class AnvilEnchantmentConfigGui {
                         () -> AnvilEnchantmentConfig.leechTriggerChance,
                         value -> AnvilEnchantmentConfig.leechTriggerChance = value, 0.5, 0.0, 1.0,
                         Component.translatable("cfg.enchantworks.values.leech_trigger.tooltip"))
-                .doubleValue("leech_lifesteal_ratio", Component.translatable("cfg.enchantworks.values.leech_lifesteal"),
+                .doubleValueUnbounded("leech_lifesteal_ratio", Component.translatable("cfg.enchantworks.values.leech_lifesteal"),
                         () -> AnvilEnchantmentConfig.leechLifestealRatio,
                         value -> AnvilEnchantmentConfig.leechLifestealRatio = value, 0.1,
                         Component.translatable("cfg.enchantworks.values.leech_lifesteal.tooltip"))
@@ -155,7 +155,7 @@ public final class AnvilEnchantmentConfigGui {
                         Component.translatable("cfg.enchantworks.values.leech_steal.tooltip"))
 
                 .section(Component.translatable("cfg.enchantworks.section.other_values"))
-                .doubleValue("omni_tool_speed", Component.translatable("cfg.enchantworks.values.omni_speed"),
+                .doubleValueUnbounded("omni_tool_speed", Component.translatable("cfg.enchantworks.values.omni_speed"),
                         () -> AnvilEnchantmentConfig.omniToolBaseSpeedMultiplier,
                         value -> AnvilEnchantmentConfig.omniToolBaseSpeedMultiplier = value, 3.0,
                         Component.translatable("cfg.enchantworks.values.omni_speed.tooltip"))
@@ -168,7 +168,7 @@ public final class AnvilEnchantmentConfigGui {
                         () -> new ArrayList<>(AnvilEnchantmentConfig.omniToolForceDropBlocks),
                         value -> AnvilEnchantmentConfig.omniToolForceDropBlocks = new ArrayList<>(value), List.of(),
                         Component.translatable("cfg.enchantworks.values.force_drop.tooltip"))
-                .doubleValue("enlightenment_multiplier", Component.translatable("cfg.enchantworks.values.enlightenment"),
+                .doubleValueUnbounded("enlightenment_multiplier", Component.translatable("cfg.enchantworks.values.enlightenment"),
                         () -> AnvilEnchantmentConfig.enlightenmentExpMult,
                         value -> AnvilEnchantmentConfig.enlightenmentExpMult = value, 0.125,
                         Component.translatable("cfg.enchantworks.values.enlightenment.tooltip"))

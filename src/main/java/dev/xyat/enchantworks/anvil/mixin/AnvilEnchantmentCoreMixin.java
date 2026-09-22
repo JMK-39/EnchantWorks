@@ -2,6 +2,7 @@ package dev.xyat.enchantworks.anvil.mixin;
 
 import dev.xyat.enchantworks.anvil.config.AnvilEnchantmentConfig;
 import dev.xyat.enchantworks.anvil.util.TaxFreeLevelsLogic;
+import dev.xyat.kineticcore.api.registry.KineticRegistries;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AnvilMenu;
@@ -15,7 +16,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -229,7 +229,7 @@ public class AnvilEnchantmentCoreMixin {
 
             list.removeIf(instance -> AnvilEnchantmentConfig.isEnchantmentDisabled(instance.enchantment) || AnvilEnchantmentConfig.isExplicitlyDenied(stack, instance.enchantment));
 
-            for (Enchantment enchantment : ForgeRegistries.ENCHANTMENTS) {
+            for (Enchantment enchantment : KineticRegistries.enchantments().values()) {
                 if (AnvilEnchantmentConfig.isEnchantmentDisabled(enchantment)) continue;
                 if (enchantment.isCurse() || (enchantment.isTreasureOnly() && !allowTreasure)) continue;
                 if (AnvilEnchantmentConfig.isExplicitlyAllowed(stack, enchantment)) {

@@ -1,37 +1,39 @@
 package dev.xyat.enchantworks.enchantment.enlightenment;
 
-import dev.xyat.enchantworks.EnchantWorks;
 import dev.xyat.enchantworks.anvil.config.AnvilEnchantmentConfig;
 import dev.xyat.enchantworks.enchantment.init.EnchantmentInit;
+import dev.xyat.kineticcore.api.entity.event.KineticLivingEvents;
+import dev.xyat.kineticcore.api.event.KineticEventPriority;
+import dev.xyat.kineticcore.api.world.event.KineticWorldEvents;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
-import net.minecraftforge.event.level.BlockEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = EnchantWorks.MODID)
-public class EnlightenmentEvent {
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onLivingExperienceDrop(LivingExperienceDropEvent event) {
-        Player player = event.getAttackingPlayer();
-        if (player == null || player.level().isClientSide) return;
+public final class EnlightenmentEvent {
+    private static boolean initialized;
 
-        int experience = applyBonus(player, event.getDroppedExperience());
-        if (experience != event.getDroppedExperience()) {
-            event.setDroppedExperience(experience);
-        }
+    private EnlightenmentEvent() {
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onBlockBreak(BlockEvent.BreakEvent event) {
-        Player player = event.getPlayer();
-        if (player.level().isClientSide) return;
+    public static synchronized void register() {
+        if (initialized) return;
+        KineticLivingEvents.onExperienceDrop(KineticEventPriority.LOWEST, context -> {
+            Player player = context.attackingPlayer();
+            if (player == null || player.level().isClientSide) return;
 
-        int experience = applyBonus(player, event.getExpToDrop());
-        if (experience != event.getExpToDrop()) {
-            event.setExpToDrop(experience);
-        }
+            int experience = applyBonus(player, context.droppedExperience());
+            if (experience != context.droppedExperience()) {
+                context.droppedExperience(experience);
+            }
+        });
+        KineticWorldEvents.onBlockBreak(KineticEventPriority.LOWEST, context -> {
+            Player player = context.player();
+            if (player.level().isClientSide) return;
+
+            int experience = applyBonus(player, context.experienceToDrop());
+            if (experience != context.experienceToDrop()) {
+                context.experienceToDrop(experience);
+            }
+        });
+        initialized = true;
     }
 
     private static int applyBonus(Player player, int baseExperience) {

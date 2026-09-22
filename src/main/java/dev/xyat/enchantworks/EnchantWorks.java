@@ -5,14 +5,18 @@ import dev.xyat.enchantworks.anvil.config.AnvilEnchantmentConfig;
 import dev.xyat.enchantworks.anvil.config.AnvilEnchantmentConfigGui;
 import dev.xyat.enchantworks.enchantment.init.EnchantmentInit;
 import dev.xyat.enchantworks.enchantment.init.RecipeInit;
-import dev.xyat.kineticcore.config.server.KTServerConfigApi;
-import dev.xyat.kineticcore.config.server.KTServerConfigSpec;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
+import dev.xyat.enchantworks.enchantment.init.EnchantmentTabRegistry;
+import dev.xyat.enchantworks.enchantment.client.EnchantmentTooltipHandler;
+import dev.xyat.enchantworks.enchantment.enlightenment.EnlightenmentEvent;
+import dev.xyat.enchantworks.enchantment.leech.LeechEvent;
+import dev.xyat.enchantworks.enchantment.omni_tool.OmniToolEvent;
+import dev.xyat.enchantworks.enchantment.sixth_sense.SixthSenseClientEvent;
+import dev.xyat.enchantworks.enchantment.smelter.SmelterEventHandler;
+import dev.xyat.kineticcore.api.config.server.KTServerConfigApi;
+import dev.xyat.kineticcore.api.config.server.KTServerConfigSpec;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
+import dev.xyat.kineticcore.api.runtime.KineticPlatform;
 
 import java.util.ArrayList;
 
@@ -22,7 +26,6 @@ public final class EnchantWorks {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public EnchantWorks() {
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         AnvilEnchantmentConfig.load();
         KTServerConfigApi.register(KTServerConfigSpec.builder("enchantworks:server")
                 .booleanValue("remove_anvil_limit", () -> AnvilEnchantmentConfig.removeAnvilLimit, value -> AnvilEnchantmentConfig.removeAnvilLimit = value)
@@ -56,8 +59,17 @@ public final class EnchantWorks {
                 .doubleValue("enlightenment_multiplier", () -> AnvilEnchantmentConfig.enlightenmentExpMult, value -> AnvilEnchantmentConfig.enlightenmentExpMult = value, -Double.MAX_VALUE, Double.MAX_VALUE)
                 .onSave(AnvilEnchantmentConfig::saveServerSettings)
                 .build());
-        EnchantmentInit.register(modEventBus);
-        RecipeInit.register(modEventBus);
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> AnvilEnchantmentConfigGui.load());
+        EnchantmentInit.register();
+        RecipeInit.register();
+        EnchantmentTabRegistry.register();
+        EnlightenmentEvent.register();
+        OmniToolEvent.register();
+        LeechEvent.register();
+        SmelterEventHandler.register();
+        KineticPlatform.runOnClient(() -> () -> {
+            AnvilEnchantmentConfigGui.load();
+            SixthSenseClientEvent.register();
+            EnchantmentTooltipHandler.register();
+        });
     }
 }

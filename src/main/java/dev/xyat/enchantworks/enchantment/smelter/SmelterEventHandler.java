@@ -1,6 +1,5 @@
 package dev.xyat.enchantworks.enchantment.smelter;
 
-import dev.xyat.enchantworks.EnchantWorks;
 import dev.xyat.enchantworks.anvil.config.AnvilEnchantmentConfig;
 import dev.xyat.enchantworks.enchantment.init.EnchantmentInit;
 import net.minecraft.nbt.CompoundTag;
@@ -17,68 +16,71 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.event.entity.living.LivingDropsEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
 import java.util.Stack;
+import dev.xyat.kineticcore.api.event.KineticEventPriority;
+import dev.xyat.kineticcore.api.entity.event.KineticLivingEvents;
+import dev.xyat.kineticcore.api.world.event.KineticWorldEvents;
+import net.minecraft.world.level.LevelAccessor;
 
-@Mod.EventBusSubscriber(modid = EnchantWorks.MODID)
 public class SmelterEventHandler {
     private static final int MAX_CONTAINER_DEPTH = 4;
     private static final ThreadLocal<Stack<ServerPlayer>> MINING_PLAYER = ThreadLocal.withInitial(Stack::new);
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onLivingDrop(LivingDropsEvent event) {
-        if (!EnchantmentInit.isEnabled(EnchantmentInit.SMELTER) || !AnvilEnchantmentConfig.smelterCooksMobs) {
-            return;
-        }
-        if (!(event.getSource().getEntity() instanceof Player player) || player.isCrouching()) {
-            return;
-        }
-        if (!hasSmelter(player.getMainHandItem())) {
-            return;
-        }
+    private static boolean initialized;
 
-        double experience = 0.0D;
-        for (ItemEntity drop : event.getDrops()) {
-            SmeltResult result = process(player.level(), drop.getItem(), 0);
-            if (result.changed()) {
-                drop.setItem(result.stack());
-                experience += result.experience();
+    public static synchronized void register() {
+        if (initialized) return;
+        KineticLivingEvents.onDrops(KineticEventPriority.LOWEST, context -> {
+            if (!EnchantmentInit.isEnabled(EnchantmentInit.SMELTER) || !AnvilEnchantmentConfig.smelterCooksMobs) {
+                return;
             }
-        }
-        awardExperience(player.level(), event.getEntity().position(), experience);
-    }
+            if (!(context.source().getEntity() instanceof Player player) || player.isCrouching()) {
+                return;
+            }
+            if (!hasSmelter(player.getMainHandItem())) {
+                return;
+            }
 
-    @SubscribeEvent(priority = EventPriority.HIGH)
-    public static void onEntityJoinLevel(EntityJoinLevelEvent event) {
-        if (event.getLevel().isClientSide() || !EnchantmentInit.isEnabled(EnchantmentInit.SMELTER)) {
-            return;
-        }
-        if (!(event.getEntity() instanceof ItemEntity itemEntity)) {
-            return;
-        }
+            double experience = 0.0D;
+            for (ItemEntity drop : context.drops()) {
+                SmeltResult result = process(player.level(), drop.getItem(), 0);
+                if (result.changed()) {
+                    drop.setItem(result.stack());
+                    experience += result.experience();
+                }
+            }
+            awardExperience(player.level(), context.entity().position(), experience);
+        });
 
-        Stack<ServerPlayer> players = MINING_PLAYER.get();
-        if (players.isEmpty()) {
-            return;
-        }
+        KineticWorldEvents.onEntityJoin(KineticEventPriority.HIGH, context -> {
+            LevelAccessor levelAccessor = context.level();
+            if (levelAccessor.isClientSide() || !EnchantmentInit.isEnabled(EnchantmentInit.SMELTER)) {
+                return;
+            }
+            if (!(context.entity() instanceof ItemEntity itemEntity) || !(levelAccessor instanceof Level level)) {
+                return;
+            }
 
-        ServerPlayer player = players.peek();
-        if (player == null || player.isCrouching() || !hasSmelter(player.getMainHandItem())) {
-            return;
-        }
+            Stack<ServerPlayer> players = MINING_PLAYER.get();
+            if (players.isEmpty()) {
+                return;
+            }
 
-        SmeltResult result = process(event.getLevel(), itemEntity.getItem(), 0);
-        if (!result.changed()) {
-            return;
-        }
+            ServerPlayer player = players.peek();
+            if (player == null || player.isCrouching() || !hasSmelter(player.getMainHandItem())) {
+                return;
+            }
 
-        itemEntity.setItem(result.stack());
-        awardExperience(event.getLevel(), itemEntity.position(), result.experience());
+            SmeltResult result = process(level, itemEntity.getItem(), 0);
+            if (!result.changed()) {
+                return;
+            }
+
+            itemEntity.setItem(result.stack());
+            awardExperience(level, itemEntity.position(), result.experience());
+        });
+        initialized = true;
     }
 
     public static void pushPlayer(ServerPlayer player) {

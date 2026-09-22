@@ -2,6 +2,7 @@ package dev.xyat.enchantworks.enchantment.mixin;
 
 import dev.xyat.enchantworks.anvil.config.AnvilEnchantmentConfig;
 import dev.xyat.enchantworks.enchantment.smelter.SmelterEventHandler;
+import dev.xyat.kineticcore.api.registry.KineticRegistries;
 import dev.xyat.enchantworks.enchantment.init.EnchantmentInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -24,7 +25,6 @@ import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.inventory.EnchantmentMenu;
 import net.minecraft.world.inventory.DataSlot;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraft.world.level.Level;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
@@ -323,7 +323,7 @@ public class ItemAndBlockBehaviorMixin {
         @Unique
         private static String enchantworks_enchant$itemId(ItemStack stack) {
             if (stack == null || stack.isEmpty()) return "empty";
-            ResourceLocation id = ForgeRegistries.ITEMS.getKey(stack.getItem());
+            ResourceLocation id = KineticRegistries.items().id(stack.getItem());
             return id == null ? String.valueOf(stack.getItem()) : id.toString();
         }
     }

@@ -5,6 +5,9 @@ import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.file.FileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import dev.xyat.enchantworks.EnchantWorks;
+import dev.xyat.kineticcore.api.registry.KineticRegistries;
+import dev.xyat.kineticcore.api.resource.KineticResourceIds;
+import dev.xyat.kineticcore.api.runtime.KineticPaths;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
@@ -14,15 +17,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
 public class AnvilEnchantmentConfig {
-    private static final Path CONFIG_DIR = FMLPaths.CONFIGDIR.get().resolve("kineticcore");
+    private static final Path CONFIG_DIR = KineticPaths.configDirectory().resolve("kineticcore");
     private static final Path CONFIG_PATH = CONFIG_DIR.resolve("anvilenchantments.toml");
     private static CommentedFileConfig configData;
 
@@ -455,12 +456,12 @@ public class AnvilEnchantmentConfig {
 
         LEECH_EFFECT_CACHE.clear();
         for (String id : leechEffectList) {
-            ResourceLocation loc = ResourceLocation.tryParse(id.trim()); if (loc != null) LEECH_EFFECT_CACHE.add(loc);
+            ResourceLocation loc = KineticResourceIds.tryParse(id.trim()); if (loc != null) LEECH_EFFECT_CACHE.add(loc);
         }
 
         SIXTH_SENSE_CUSTOM_CACHE.clear();
         for (String idStr : sixthSenseCustomMobs) {
-            ResourceLocation loc = ResourceLocation.tryParse(idStr.trim()); if (loc != null) SIXTH_SENSE_CUSTOM_CACHE.add(loc);
+            ResourceLocation loc = KineticResourceIds.tryParse(idStr.trim()); if (loc != null) SIXTH_SENSE_CUSTOM_CACHE.add(loc);
         }
 
         SMELTER_MULTIPLIER_CACHE.clear();
@@ -494,7 +495,7 @@ public class AnvilEnchantmentConfig {
 
     public static boolean isEnchantmentDisabled(Enchantment e) {
         if (e == null) return false;
-        ResourceLocation rl = ForgeRegistries.ENCHANTMENTS.getKey(e);
+        ResourceLocation rl = KineticRegistries.enchantments().id(e);
         if (rl == null) return false;
         String id = rl.toString();
 
@@ -533,7 +534,7 @@ public class AnvilEnchantmentConfig {
 
     public static boolean hasExplicitAllowRuleForStack(ItemStack stack) {
         if (stack == null || stack.isEmpty() || WHITELIST_CACHE.isEmpty()) return false;
-        ResourceLocation itemRL = ForgeRegistries.ITEMS.getKey(stack.getItem());
+        ResourceLocation itemRL = KineticRegistries.items().id(stack.getItem());
         if (itemRL == null) return false;
         for (ParsedRule rule : WHITELIST_CACHE) {
             if (rule.matchesTargetOnly(stack, itemRL.toString(), itemRL.getNamespace())) return true;
@@ -554,7 +555,7 @@ public class AnvilEnchantmentConfig {
         if (rawId == null) return null;
         String trimmed = rawId.trim();
         if (trimmed.isEmpty()) return null;
-        ResourceLocation id = ResourceLocation.tryParse(trimmed);
+        ResourceLocation id = KineticResourceIds.tryParse(trimmed);
         return id == null ? null : id.toString();
     }
 
@@ -565,7 +566,7 @@ public class AnvilEnchantmentConfig {
         if (trimmed.indexOf(':') < 0) {
             trimmed = EnchantWorks.MODID + ":" + trimmed;
         }
-        ResourceLocation id = ResourceLocation.tryParse(trimmed);
+        ResourceLocation id = KineticResourceIds.tryParse(trimmed);
         if (id == null || !EnchantWorks.MODID.equals(id.getNamespace()) || !MOD_ENCHANTMENT_PATHS.contains(id.getPath())) {
             return null;
         }
@@ -574,7 +575,7 @@ public class AnvilEnchantmentConfig {
 
     public static int getSmelterMultiplier(ItemStack stack) {
         if (stack.isEmpty()) return 1;
-        ResourceLocation rl = ForgeRegistries.ITEMS.getKey(stack.getItem());
+        ResourceLocation rl = KineticRegistries.items().id(stack.getItem());
         if (rl == null) return 1;
         String id = rl.toString();
         String modId = rl.getNamespace();
@@ -590,7 +591,7 @@ public class AnvilEnchantmentConfig {
     public static boolean shouldRemoveAnvilLimit(ItemStack stack) {
         if (!removeAnvilLimit) return false;
         if (stack.isEmpty()) return true;
-        ResourceLocation idRL = ForgeRegistries.ITEMS.getKey(stack.getItem());
+        ResourceLocation idRL = KineticRegistries.items().id(stack.getItem());
         if (idRL == null) return !anvilLimitWhitelistMode;
         String id = idRL.toString();
         boolean match = ANVIL_ID_CACHE.contains(id);
@@ -621,7 +622,7 @@ public class AnvilEnchantmentConfig {
 
     public static boolean canLeechEffect(MobEffect effect) {
         if (effect == null || !effect.isBeneficial()) return false;
-        ResourceLocation id = ForgeRegistries.MOB_EFFECTS.getKey(effect);
+        ResourceLocation id = KineticRegistries.mobEffects().id(effect);
         if (id == null) return false;
         boolean listed = LEECH_EFFECT_CACHE.contains(id);
         return leechEffectBlacklistMode ? !listed : listed;
@@ -629,8 +630,8 @@ public class AnvilEnchantmentConfig {
 
     private static boolean checkParsedRules(ItemStack stack, Enchantment enchantment, List<ParsedRule> cache) {
         if (stack.isEmpty() || cache.isEmpty() || enchantment == null) return false;
-        ResourceLocation itemRL = ForgeRegistries.ITEMS.getKey(stack.getItem());
-        ResourceLocation enchantRL = ForgeRegistries.ENCHANTMENTS.getKey(enchantment);
+        ResourceLocation itemRL = KineticRegistries.items().id(stack.getItem());
+        ResourceLocation enchantRL = KineticRegistries.enchantments().id(enchantment);
         if (itemRL == null || enchantRL == null) return false;
         for (ParsedRule rule : cache) {
             if (rule.matches(stack, itemRL.toString(), itemRL.getNamespace(), enchantRL.toString())) return true;
@@ -732,7 +733,7 @@ public class AnvilEnchantmentConfig {
 
     public static boolean shouldOmniToolForceDrop(BlockState state) {
         if (state == null || OMNI_TOOL_FORCE_DROP_BLOCK_CACHE.isEmpty()) return false;
-        ResourceLocation idRL = ForgeRegistries.BLOCKS.getKey(state.getBlock());
+        ResourceLocation idRL = KineticRegistries.blocks().id(state.getBlock());
         if (idRL == null) return false;
         String id = idRL.toString();
         String modId = idRL.getNamespace();
@@ -768,7 +769,7 @@ public class AnvilEnchantmentConfig {
             this.type = type;
             this.value = value;
             if (type == TargetType.TAG) {
-                ResourceLocation loc = ResourceLocation.tryParse(value);
+                ResourceLocation loc = KineticResourceIds.tryParse(value);
                 this.cachedTagKey = loc != null ? ItemTags.create(loc) : null;
             } else {
                 this.cachedTagKey = null;
@@ -789,7 +790,7 @@ public class AnvilEnchantmentConfig {
             this.type = type;
             this.value = value;
             if (type == TargetType.TAG) {
-                ResourceLocation loc = ResourceLocation.tryParse(value);
+                ResourceLocation loc = KineticResourceIds.tryParse(value);
                 this.cachedTagKey = loc != null ? BlockTags.create(loc) : null;
             } else {
                 this.cachedTagKey = null;

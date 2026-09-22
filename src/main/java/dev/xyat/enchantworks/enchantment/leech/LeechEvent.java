@@ -1,42 +1,47 @@
 package dev.xyat.enchantworks.enchantment.leech;
 
-import dev.xyat.enchantworks.EnchantWorks;
 import dev.xyat.enchantworks.anvil.config.AnvilEnchantmentConfig;
 import dev.xyat.enchantworks.enchantment.init.EnchantmentInit;
+import dev.xyat.kineticcore.api.entity.event.KineticLivingEvents;
+import dev.xyat.kineticcore.api.event.KineticEventPriority;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = EnchantWorks.MODID)
-public class LeechEvent {
-    @SubscribeEvent
-    public static void onLivingDamage(LivingDamageEvent event) {
-        if (!EnchantmentInit.isEnabled(EnchantmentInit.LEECH)) return;
+public final class LeechEvent {
+    private static boolean initialized;
 
-        Entity source = event.getSource().getEntity();
-        if (!(source instanceof LivingEntity attacker)) return;
-        if (event.getSource().isIndirect()) return;
+    private LeechEvent() {
+    }
 
-        LivingEntity target = event.getEntity();
-        if (target == attacker || !target.isAlive() || event.getAmount() <= 0.0F) return;
+    public static synchronized void register() {
+        if (initialized) return;
+        KineticLivingEvents.onDamage(KineticEventPriority.NORMAL, context -> {
+            if (!EnchantmentInit.isEnabled(EnchantmentInit.LEECH)) return;
 
-        int level = EnchantmentInit.getEntityLevel(EnchantmentInit.LEECH, attacker);
-        if (level <= 0 || attacker.getRandom().nextDouble() >= AnvilEnchantmentConfig.leechTriggerChance) return;
+            Entity source = context.source().getEntity();
+            if (!(source instanceof LivingEntity attacker)) return;
+            if (context.source().isIndirect()) return;
 
-        float healAmount = event.getAmount() * (float) AnvilEnchantmentConfig.leechLifestealRatio * level;
-        if (healAmount > 0.0F) {
-            attacker.heal(healAmount);
-        }
+            LivingEntity target = context.entity();
+            if (target == attacker || !target.isAlive() || context.amount() <= 0.0F) return;
 
-        if (attacker.getRandom().nextDouble() < AnvilEnchantmentConfig.leechStealChance) {
-            stealEffect(attacker, target);
-        }
+            int level = EnchantmentInit.getEntityLevel(EnchantmentInit.LEECH, attacker);
+            if (level <= 0 || attacker.getRandom().nextDouble() >= AnvilEnchantmentConfig.leechTriggerChance) return;
+
+            float healAmount = context.amount() * (float) AnvilEnchantmentConfig.leechLifestealRatio * level;
+            if (healAmount > 0.0F) {
+                attacker.heal(healAmount);
+            }
+
+            if (attacker.getRandom().nextDouble() < AnvilEnchantmentConfig.leechStealChance) {
+                stealEffect(attacker, target);
+            }
+        });
+        initialized = true;
     }
 
     private static void stealEffect(LivingEntity attacker, LivingEntity target) {

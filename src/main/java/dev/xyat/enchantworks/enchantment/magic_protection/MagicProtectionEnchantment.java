@@ -1,5 +1,7 @@
 package dev.xyat.enchantworks.enchantment.magic_protection;
 
+import javax.annotation.Nonnull;
+
 import dev.xyat.enchantworks.anvil.config.AnvilEnchantmentConfig;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
@@ -30,7 +32,7 @@ public class MagicProtectionEnchantment extends Enchantment {
     }
 
     @Override
-    public int getDamageProtection(int level, DamageSource source) {
+    public int getDamageProtection(int level, @Nonnull DamageSource source) {
         if (AnvilEnchantmentConfig.isEnchantmentDisabled(this)) {
             return 0;
         }

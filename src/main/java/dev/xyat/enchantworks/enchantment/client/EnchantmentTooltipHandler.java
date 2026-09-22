@@ -1,41 +1,45 @@
 package dev.xyat.enchantworks.enchantment.client;
 
-import dev.xyat.enchantworks.EnchantWorks;
 import dev.xyat.enchantworks.anvil.config.AnvilEnchantmentConfig;
+import dev.xyat.kineticcore.api.client.tooltip.KineticItemTooltips;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.BowItem;
+import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
 import java.util.List;
 import java.util.Map;
 
-@Mod.EventBusSubscriber(modid = EnchantWorks.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
-public class EnchantmentTooltipHandler {
+public final class EnchantmentTooltipHandler {
+    private static boolean initialized;
 
-    @SubscribeEvent
-    public static void onItemTooltip(ItemTooltipEvent event) {
-        ItemStack stack = event.getItemStack();
+    private EnchantmentTooltipHandler() {
+    }
+
+    public static synchronized void register() {
+        if (initialized) return;
+        KineticItemTooltips.onBuild(EnchantmentTooltipHandler::buildTooltip);
+        initialized = true;
+    }
+
+    private static void buildTooltip(ItemStack stack, List<Component> tooltip) {
         if (stack.isEmpty()) return;
 
         Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(stack);
-        List<Component> tooltip = event.getToolTip();
         Item item = stack.getItem();
 
-        // --- 引雷 II 处理 ---
         int channelingLevel = enchantments.getOrDefault(Enchantments.CHANNELING, 0);
         if (!AnvilEnchantmentConfig.isEnchantmentDisabled(Enchantments.CHANNELING) && channelingLevel >= 2) {
             tooltip.add(Component.translatable("enchantment.enchantworks.channeling2.desc")
                     .withStyle(ChatFormatting.DARK_AQUA));
         }
 
-        // --- 无限 处理 ---
         int infinityLevel = enchantments.getOrDefault(Enchantments.INFINITY_ARROWS, 0);
         if (!AnvilEnchantmentConfig.isEnchantmentDisabled(Enchantments.INFINITY_ARROWS) && infinityLevel >= 1) {
             if (item instanceof BowItem || item == Items.ENCHANTED_BOOK) {

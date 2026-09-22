@@ -1,5 +1,7 @@
 package dev.xyat.enchantworks.enchantment.recipe;
 
+import javax.annotation.Nonnull;
+
 import com.google.gson.JsonObject;
 import dev.xyat.enchantworks.enchantment.init.EnchantmentInit;
 import dev.xyat.enchantworks.enchantment.init.RecipeInit;
@@ -126,7 +128,7 @@ public class OmniToolRecipe implements CraftingRecipe {
         }
 
         @Override
-        public @Nullable OmniToolRecipe fromNetwork(@NotNull ResourceLocation id, FriendlyByteBuf buf) {
+        public @Nullable OmniToolRecipe fromNetwork(@NotNull ResourceLocation id, @Nonnull FriendlyByteBuf buf) {
             String group = buf.readUtf();
             int size = buf.readVarInt();
             NonNullList<Ingredient> ingredients = NonNullList.withSize(size, Ingredient.EMPTY);
@@ -135,7 +137,7 @@ public class OmniToolRecipe implements CraftingRecipe {
         }
 
         @Override
-        public void toNetwork(FriendlyByteBuf buf, OmniToolRecipe recipe) {
+        public void toNetwork(@Nonnull FriendlyByteBuf buf, @Nonnull OmniToolRecipe recipe) {
             buf.writeUtf(recipe.group);
             buf.writeVarInt(recipe.ingredients.size());
             for (Ingredient ingredient : recipe.ingredients) {
