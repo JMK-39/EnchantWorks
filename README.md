@@ -80,7 +80,6 @@ The main file is `config/kineticcore/anvilenchantments.toml`. Its generated comm
 - Server-authoritative settings are not ordinary client preferences. When connected to a remote server without a supported secure editing path, that page cannot be edited from the client; maintain the configuration on the server.
 - Sixth Sense display preferences remain locally editable when connected to a server.
 
-[Back to language selection](#enchant-works)
 
 ---
 
@@ -161,5 +160,3 @@ minecraft:stick ; *
 - 附魔注册开关、注册级禁用项需要**完整重启游戏或服务器**；客户端与服务端应使用一致的注册设置。
 - 服务端规则不是普通客户端偏好。连接远程服务器而没有可用的安全编辑通道时，客户端不能修改该页面，应在服务端维护配置。
 - 第六感显示偏好在连接服务器时仍可本地调整。
-
-[返回语言选择](#enchant-works)
