@@ -16,7 +16,7 @@ Enchant Works combines configurable anvil rules with five custom enchantments an
 | Forge | 47.4.2 or later in the 1.20.1 branch |
 | KineticCore | 26.9.20+ |
 
-Install the mod and its dependencies on both the client and server. The mod ID is `enchantworks`; the license is LGPLv3. The requirements above describe this source branch, not a future Minecraft release.
+Install Enchant Works and its dependencies on both client and server. These requirements apply to the Minecraft 1.20.1 branch.
 
 ### Anvil and experience rules
 
@@ -80,10 +80,6 @@ The main file is `config/kineticcore/anvilenchantments.toml`. Its generated comm
 - Server-authoritative settings are not ordinary client preferences. When connected to a remote server without a supported secure editing path, that page cannot be edited from the client; maintain the configuration on the server.
 - Sixth Sense display preferences remain locally editable when connected to a server.
 
-### Source references
-
-[Configuration and rule syntax](src/main/java/dev/xyat/enchantworks/anvil/config/AnvilEnchantmentConfig.java) · [Registered enchantments](src/main/java/dev/xyat/enchantworks/enchantment/init/EnchantmentInit.java) · [Omni Tool recipe](src/main/resources/data/enchantworks/recipes/omni_tool_netherite.json)
-
 [Back to language selection](#enchant-works)
 
 ---
@@ -102,7 +98,7 @@ Enchant Works（附魔工坊）整合铁砧规则、五种自定义附魔和部�
 | Forge | 1.20.1 分支的 47.4.2 或更高版本 |
 | KineticCore | 26.9.20+ |
 
-客户端和服务端均应安装本模组及前置。模组 ID 为 `enchantworks`，许可证为 LGPLv3。这里说明的是当前源码分支，不代表已支持后续 Minecraft 版本。
+客户端和服务端均应安装附魔工坊及前置；本文列出的版本范围针对 Minecraft 1.20.1，不表示已适配更新版本。
 
 ### 铁砧与经验规则
 
@@ -165,9 +161,5 @@ minecraft:stick ; *
 - 附魔注册开关、注册级禁用项需要**完整重启游戏或服务器**；客户端与服务端应使用一致的注册设置。
 - 服务端规则不是普通客户端偏好。连接远程服务器而没有可用的安全编辑通道时，客户端不能修改该页面，应在服务端维护配置。
 - 第六感显示偏好在连接服务器时仍可本地调整。
-
-### 源码对照
-
-[配置与规则语法](src/main/java/dev/xyat/enchantworks/anvil/config/AnvilEnchantmentConfig.java) · [实际注册的附魔](src/main/java/dev/xyat/enchantworks/enchantment/init/EnchantmentInit.java) · [万能工具配方](src/main/resources/data/enchantworks/recipes/omni_tool_netherite.json)
 
 [返回语言选择](#enchant-works)
