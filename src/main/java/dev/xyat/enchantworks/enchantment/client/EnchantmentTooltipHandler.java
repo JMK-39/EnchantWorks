@@ -2,7 +2,7 @@ package dev.xyat.enchantworks.enchantment.client;
 
 import dev.xyat.enchantworks.anvil.config.AnvilEnchantmentConfig;
 import dev.xyat.kineticcore.api.client.tooltip.KineticItemTooltips;
-import net.minecraft.ChatFormatting;
+import dev.xyat.kineticcore.api.text.KineticI18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.BucketItem;
@@ -36,8 +36,7 @@ public final class EnchantmentTooltipHandler {
 
         int channelingLevel = enchantments.getOrDefault(Enchantments.CHANNELING, 0);
         if (!AnvilEnchantmentConfig.isEnchantmentDisabled(Enchantments.CHANNELING) && channelingLevel >= 2) {
-            tooltip.add(Component.translatable("enchantment.enchantworks.channeling2.desc")
-                    .withStyle(ChatFormatting.DARK_AQUA));
+            tooltip.add(KineticI18n.translatable("enchantment.enchantworks.channeling2.desc"));
         }
 
         int infinityLevel = enchantments.getOrDefault(Enchantments.INFINITY_ARROWS, 0);
@@ -52,10 +51,10 @@ public final class EnchantmentTooltipHandler {
     }
 
     private static void addEnhancedTooltip(List<Component> tooltip, String key) {
-        tooltip.add(Component.translatable("enchantment.enchantworks." + key + ".title")
-                .withStyle(ChatFormatting.GOLD)
-                .append(Component.literal(": ").withStyle(ChatFormatting.GRAY))
-                .append(Component.translatable("enchantment.enchantworks." + key + ".desc")
-                        .withStyle(ChatFormatting.AQUA)));
+        tooltip.add(KineticI18n.translatable(
+                "enchantment.enchantworks.enhanced.tooltip",
+                KineticI18n.translatable("enchantment.enchantworks." + key + ".title"),
+                KineticI18n.translatable("enchantment.enchantworks." + key + ".desc")
+        ));
     }
 }

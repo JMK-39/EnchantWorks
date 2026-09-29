@@ -14,7 +14,7 @@ Enchant Works combines configurable anvil rules with five custom enchantments an
 | --- | --- |
 | Minecraft | 1.20.1 |
 | Forge | 47.4.2 or later in the 1.20.1 branch |
-| KineticCore | 26.9.20+ |
+26.9.28+ |
 
 Install Enchant Works and its dependencies on both client and server. These requirements apply to the Minecraft 1.20.1 branch.
 
@@ -95,7 +95,7 @@ Enchant Works（附魔工坊）整合铁砧规则、五种自定义附魔和部�
 | --- | --- |
 | Minecraft | 1.20.1 |
 | Forge | 1.20.1 分支的 47.4.2 或更高版本 |
-| KineticCore | 26.9.20+ |
+26.9.28+ |
 
 客户端和服务端均应安装附魔工坊及前置；本文列出的版本范围针对 Minecraft 1.20.1，不表示已适配更新版本。
 

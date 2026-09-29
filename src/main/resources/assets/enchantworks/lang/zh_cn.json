@@ -95,6 +95,7 @@
   "enchantment.enchantworks.magic_protection.desc": "减少受到的魔法伤害。",
   "enchantment.enchantworks.omni_tool": "万能工具",
   "enchantment.enchantworks.omni_tool.desc": "§a万能工具:§f让附魔工具同时具备§b镐、斧、铲、锄、剪刀§f的可挖掘能力；附魔台第三档达到30级时按配置概率出现，默认10%。基础速度按当前工具速度倍率补偿，并会按方块硬度额外加速。不会绕过方块自己的掉落规则，只有配置名单里的特殊方块才会被强制掉落。",
+  "enchantment.enchantworks.enhanced.tooltip": "§6%s§f: §b%s",
   "enchantment.enchantworks.channeling2.desc": "§6增强引雷 II: §b可在任何天气下引发闪电。",
   "enchantment.enchantworks.infinity_bow.title": "无限 (增强)",
   "enchantment.enchantworks.infinity_bow.desc": "无需箭矢即可射击",

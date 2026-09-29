@@ -7,7 +7,7 @@ import com.electronwill.nightconfig.core.io.WritingMode;
 import dev.xyat.enchantworks.EnchantWorks;
 import dev.xyat.kineticcore.api.registry.KineticRegistries;
 import dev.xyat.kineticcore.api.resource.KineticResourceIds;
-import dev.xyat.kineticcore.api.runtime.KineticPaths;
+import dev.xyat.kineticcore.api.runtime.KineticPlatform;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
@@ -23,7 +23,7 @@ import java.nio.file.Path;
 import java.util.*;
 
 public class AnvilEnchantmentConfig {
-    private static final Path CONFIG_DIR = KineticPaths.configDirectory().resolve("kineticcore");
+    private static final Path CONFIG_DIR = KineticPlatform.configDirectory().resolve("kineticcore");
     private static final Path CONFIG_PATH = CONFIG_DIR.resolve("anvilenchantments.toml");
     private static CommentedFileConfig configData;
 

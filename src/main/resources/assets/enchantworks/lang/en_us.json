@@ -95,6 +95,7 @@
   "enchantment.enchantworks.magic_protection.desc": "Reduces magic damage taken.",
   "enchantment.enchantworks.omni_tool": "Omni Tool",
   "enchantment.enchantworks.omni_tool.desc": "§aOmni Tool:§f Grants the enchanted tool the mining capabilities of §bPickaxe, Axe, Shovel, Hoe, Shears§f. When the enchantment table's third slot reaches level 30, appears with configured probability, default 10%. Base speed is compensated by current tool speed multiplier, with additional acceleration based on block hardness. Does not bypass blocks' own drop rules; only special blocks in the config list are forced to drop.",
+  "enchantment.enchantworks.enhanced.tooltip": "§6%s§f: §b%s",
   "enchantment.enchantworks.channeling2.desc": "§6Enhanced Channeling II: §bCan summon lightning in any weather.",
   "enchantment.enchantworks.infinity_bow.title": "Infinity (Enhanced)",
   "enchantment.enchantworks.infinity_bow.desc": "Shoots arrows without requiring them in inventory",
