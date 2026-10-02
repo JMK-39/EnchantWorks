@@ -500,12 +500,14 @@ public class AnvilEnchantmentConfig {
         String id = rl.toString();
 
         if (DISABLED_ENCHANTMENTS_CACHE.contains(id)) return true;
-        if (id.equals(EnchantWorks.MODID + ":smelter")) return !enableSmelter;
-        if (id.equals(EnchantWorks.MODID + ":leech")) return !enableLeech;
-        if (id.equals(EnchantWorks.MODID + ":sixth_sense")) return !enableSixthSense;
-        if (id.equals(EnchantWorks.MODID + ":omni_tool")) return !enableOmniTool;
-        if (id.equals(EnchantWorks.MODID + ":enlightenment")) return !enableEnlightenment;
-        return false;
+        return switch (id) {
+            case EnchantWorks.MODID + ":smelter" -> !enableSmelter;
+            case EnchantWorks.MODID + ":leech" -> !enableLeech;
+            case EnchantWorks.MODID + ":sixth_sense" -> !enableSixthSense;
+            case EnchantWorks.MODID + ":omni_tool" -> !enableOmniTool;
+            case EnchantWorks.MODID + ":enlightenment" -> !enableEnlightenment;
+            default -> false;
+        };
     }
 
     public static Set<String> getRegistryDisabledModEnchantments() {
@@ -625,7 +627,7 @@ public class AnvilEnchantmentConfig {
         ResourceLocation id = KineticRegistries.mobEffects().id(effect);
         if (id == null) return false;
         boolean listed = LEECH_EFFECT_CACHE.contains(id);
-        return leechEffectBlacklistMode ? !listed : listed;
+        return leechEffectBlacklistMode != listed;
     }
 
     private static boolean checkParsedRules(ItemStack stack, Enchantment enchantment, List<ParsedRule> cache) {
