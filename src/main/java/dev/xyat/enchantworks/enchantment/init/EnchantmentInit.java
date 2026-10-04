@@ -18,7 +18,6 @@ import net.minecraft.world.item.ItemStack;
 import dev.xyat.kineticcore.api.runtime.KineticClientRuntime;
 import dev.xyat.kineticcore.api.runtime.KineticPlatform;
 import dev.xyat.kineticcore.api.runtime.KineticServerRuntime;
-import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
@@ -124,7 +123,7 @@ public class EnchantmentInit {
     /^* An enchanted book with the enchantment, or an empty stack when it is not available. ^/
     public static ItemStack book(ResourceKey<Enchantment> key, int level) {
         Holder<Enchantment> holder = holder(key);
-        return holder == null ? ItemStack.EMPTY : EnchantedBookItem.createForEnchantment(new EnchantmentInstance(holder, level));
+        return holder == null ? ItemStack.EMPTY : net.minecraft.world.item.EnchantedBookItem.createForEnchantment(new EnchantmentInstance(holder, level));
     }
 
     /^* Every enchantment of the running world, or none outside a world. ^/

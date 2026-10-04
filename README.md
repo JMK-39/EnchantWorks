@@ -10,13 +10,13 @@ Enchant Works combines configurable anvil rules with five custom enchantments an
 
 ### Requirements
 
-| Component | Required version |
-| --- | --- |
-| Minecraft | 1.20.1 |
-| Forge | 47.4.2 or later in the 1.20.1 branch |
-26.9.28+ |
+| Minecraft | Loader | Java |
+| --- | --- | --- |
+| 1.20.1 | Forge 47.4.2+ | 21 |
+| 1.21.1 | NeoForge 21.1+ (validated with 21.1.252) | 21 |
+| 26.1.2 | NeoForge 26.1.2+ (validated with 26.1.2.112) | 25 |
 
-Install Enchant Works and its dependencies on both client and server. These requirements apply to the Minecraft 1.20.1 branch.
+Requires **KineticCore 26.10.3+** built for the same Minecraft version and loader. Install Enchant Works and KineticCore on both client and server. Since 1.21 the five enchantments are data-driven, so datapacks can adjust them like vanilla enchantments.
 
 ### Anvil and experience rules
 
@@ -60,7 +60,7 @@ Omni Tool can appear in the third enchanting-table offer when its displayed leve
 ### Vanilla enchantment extensions
 
 - **Infinity bows:** can be drawn and fired without carrying an arrow.
-- **Infinity buckets:** preserve their state when used. A filled bucket can repeatedly place its fluid; an empty bucket can remove fluid while remaining empty. The mod also handles Forge bucket fluid operations.
+- **Infinity buckets:** preserve their state when used. A filled bucket can repeatedly place its fluid; an empty bucket can remove fluid while remaining empty. The mod also handles Forge and NeoForge bucket fluid operations.
 - **Channeling II:** with Better Channeling enabled, removes the thunderstorm requirement in the trident lightning check. Other trident hit conditions still apply; this is not unconditional lightning from every attack.
 
 ### Getting started
@@ -91,13 +91,13 @@ Enchant Works（附魔工坊）整合铁砧规则、五种自定义附魔和部�
 
 ### 运行环境
 
-| 组件 | 要求 |
-| --- | --- |
-| Minecraft | 1.20.1 |
-| Forge | 1.20.1 分支的 47.4.2 或更高版本 |
-26.9.28+ |
+| Minecraft | 加载器 | Java |
+| --- | --- | --- |
+| 1.20.1 | Forge 47.4.2+ | 21 |
+| 1.21.1 | NeoForge 21.1+（验证使用 21.1.252） | 21 |
+| 26.1.2 | NeoForge 26.1.2+（验证使用 26.1.2.112） | 25 |
 
-客户端和服务端均应安装附魔工坊及前置；本文列出的版本范围针对 Minecraft 1.20.1，不表示已适配更新版本。
+需要与 Minecraft 版本、加载器对应的 **KineticCore 26.10.3+**。客户端和服务端均应安装附魔工坊与 KineticCore。1.21 起五种附魔改为数据驱动，可像原版附魔一样用数据包调整。
 
 ### 铁砧与经验规则
 
@@ -141,7 +141,7 @@ minecraft:stick ; *
 ### 原版附魔扩展
 
 - **无限弓：** 背包没有箭矢时也能拉弓射击。
-- **无限桶：** 使用后保持原状态；装有液体的桶可重复放置液体，空桶可吸取液体并继续保持为空桶，也处理 Forge 桶流体接口的操作。
+- **无限桶：** 使用后保持原状态；装有液体的桶可重复放置液体，空桶可吸取液体并继续保持为空桶，也处理 Forge 与 NeoForge 桶流体接口的操作。
 - **引雷 II：** 开启强化引雷后，三叉戟召雷判定不再要求雷暴天气；其他命中条件仍然存在，并非任意攻击都无条件产生闪电。
 
 ### 上手流程

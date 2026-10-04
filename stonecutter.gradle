@@ -138,6 +138,14 @@ stonecutter.parameters {
         call '.hasPermission(2)', '.permissions().hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER)'
         call '.hasPermissions(2)', '.permissions().hasPermission(new net.minecraft.server.permissions.Permission.HasCommandLevel(net.minecraft.server.permissions.PermissionLevel.GAMEMASTERS))'
         call '.hasPermission(3)', '.permissions().hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_ADMIN)'
+        // EnchantWorks: projectiles moved, enchanted books come from EnchantmentHelper, EnchantmentInstance is a
+        // record and loot contexts read optional parameters by name.
+        rename 'net.minecraft.world.entity.projectile.AbstractArrow', 'net.minecraft.world.entity.projectile.arrow.AbstractArrow'
+        rename 'net.minecraft.world.entity.projectile.ThrownTrident', 'net.minecraft.world.entity.projectile.arrow.ThrownTrident'
+        call 'net.minecraft.world.item.EnchantedBookItem.createForEnchantment(', 'net.minecraft.world.item.enchantment.EnchantmentHelper.createBook('
+        call 'context.getParamOrNull(', 'context.getOptionalParameter('
+        call 'method = "renderLabels"', 'method = "extractLabels"'
+        spec.replace '\\binstance\\.enchantment\\b(?!\\()', 'instance.enchantment()', '\\binstance\\.enchantment\\(\\)', 'instance.enchantment'
     }
 }
 

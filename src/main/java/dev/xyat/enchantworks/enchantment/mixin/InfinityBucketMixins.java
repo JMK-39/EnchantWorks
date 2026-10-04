@@ -4,6 +4,7 @@ import dev.xyat.enchantworks.anvil.config.AnvilEnchantmentConfig;
 import dev.xyat.enchantworks.enchantment.init.EnchantmentInit;
 
 import net.minecraft.world.InteractionHand;
+//? if <26.1
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BucketItem;
@@ -48,6 +49,17 @@ public class InfinityBucketMixins {
             }
         }
 
+        // 26.1 returns the held item through InteractionResult.Success instead of an InteractionResultHolder.
+        //? if >=26.1 {
+        /*@Inject(method = "use", at = @At("RETURN"), cancellable = true)
+        private void enchantworks_enchant$keepInfiniteBucket(Level pLevel, Player pPlayer, InteractionHand pHand, CallbackInfoReturnable<net.minecraft.world.InteractionResult> cir) {
+            ItemStack original = pPlayer.getItemInHand(pHand);
+            if (EnchantmentInit.levelOn(original, Enchantments.INFINITY_ARROWS) > 0
+                    && cir.getReturnValue() instanceof net.minecraft.world.InteractionResult.Success success) {
+                cir.setReturnValue(success.heldItemTransformedTo(original.copy()));
+            }
+        }
+        *///?} else {
         @Inject(method = "use", at = @At("RETURN"), cancellable = true)
         private void enchantworks_enchant$keepInfiniteBucket(Level pLevel, Player pPlayer, InteractionHand pHand, CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir) {
             ItemStack original = pPlayer.getItemInHand(pHand);
@@ -58,6 +70,7 @@ public class InfinityBucketMixins {
                 }
             }
         }
+        //?}
     }
 
     @Mixin(ItemUtils.class)
@@ -156,4 +169,23 @@ public class InfinityBucketMixins {
             }
         }
     }
+
+    // 26.1 keeps enchantability in the enchantable item component, read only by these two EnchantmentHelper
+    // methods; buckets get the value 10 the 1.20.1 and 1.21 hooks give through Item#getEnchantmentValue.
+    //? if >=26.1 {
+    /*@Mixin(value = EnchantmentHelper.class, priority = 2000)
+    public static class EnchantableFix {
+        @com.llamalad7.mixinextras.injector.ModifyExpressionValue(
+                method = {"getEnchantmentCost", "selectEnchantment"},
+                at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;get(Lnet/minecraft/core/component/DataComponentType;)Ljava/lang/Object;"),
+                require = 0)
+        private static Object enchantworks_enchant$bucketEnchantable(Object value,
+                @com.llamalad7.mixinextras.sugar.Local(argsOnly = true) ItemStack stack) {
+            if (value == null && stack.getItem() instanceof BucketItem) {
+                return new net.minecraft.world.item.enchantment.Enchantable(10);
+            }
+            return value;
+        }
+    }
+    *///?}
 }

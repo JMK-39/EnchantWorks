@@ -17,7 +17,7 @@ public final class EnlightenmentEvent {
         if (initialized) return;
         KineticLivingEvents.onExperienceDrop(KineticEventPriority.LOWEST, context -> {
             Player player = context.attackingPlayer();
-            if (player == null || player.level().isClientSide) return;
+            if (player == null || player.level().isClientSide()) return;
 
             int experience = applyBonus(player, context.droppedExperience());
             if (experience != context.droppedExperience()) {
@@ -26,7 +26,7 @@ public final class EnlightenmentEvent {
         });
         KineticWorldEvents.onBlockBreak(KineticEventPriority.LOWEST, context -> {
             Player player = context.player();
-            if (player.level().isClientSide) return;
+            if (player.level().isClientSide()) return;
 
             int experience = applyBonus(player, context.experienceToDrop());
             if (experience != context.experienceToDrop()) {

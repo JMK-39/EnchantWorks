@@ -5,6 +5,7 @@
   "refmap": "enchantworks.mixins.refmap.json",
   "mixins": [
     "InfinityBucketMixins$BucketItemFix",
+    "InfinityBucketMixins$EnchantableFix",
     "InfinityBucketMixins$EnchantmentFix",
     "InfinityBucketMixins$FluidBucketWrapperFix",
     "InfinityBucketMixins$ItemFix",

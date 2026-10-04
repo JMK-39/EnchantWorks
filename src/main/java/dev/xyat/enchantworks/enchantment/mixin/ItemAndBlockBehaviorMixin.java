@@ -16,6 +16,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.ThrownTrident;
 import net.minecraft.world.item.BowItem;
+//? if <26.1
 import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -155,6 +156,9 @@ public class ItemAndBlockBehaviorMixin {
         private void enchantworks_enchant$omniToolDropsSafely(BlockState state, LootParams.Builder params, CallbackInfoReturnable<List<ItemStack>> cir) {
             if (!EnchantmentInit.isEnabled(EnchantmentInit.OMNI_TOOL)) return;
 
+            //? if >=26.1 {
+            /*ItemStack tool = params.getOptionalParameter(LootContextParams.TOOL) instanceof ItemStack stack ? stack : null;
+            *///?} else
             ItemStack tool = params.getOptionalParameter(LootContextParams.TOOL);
             if (tool == null || tool.isEmpty() || EnchantmentInit.getLevel(EnchantmentInit.OMNI_TOOL, tool) <= 0) return;
 
@@ -195,15 +199,23 @@ public class ItemAndBlockBehaviorMixin {
     public static class EnchantmentHelperFix {
         @Inject(method = "getItemEnchantmentLevel", at = @At("HEAD"), cancellable = true, require = 0)
         private static void enchantworks_enchant$disableFortuneForSmelter(
-                //? if >=1.21 {
+                //? if >=26.1 {
                 /*net.minecraft.core.Holder<Enchantment> enchantment,
+                net.minecraft.world.item.ItemInstance piece,
+                *///?} else if >=1.21 {
+                /*net.minecraft.core.Holder<Enchantment> enchantment,
+                ItemStack stack,
                 *///?} else {
                 Enchantment enchantment,
-                //?}
                 ItemStack stack,
+                //?}
                 CallbackInfoReturnable<Integer> cir
         ) {
-            //? if >=1.21 {
+            // 26.1 reads levels from any item instance; only real stacks can be the mining tool.
+            //? if >=26.1 {
+            /*ItemStack stack = piece instanceof ItemStack itemStack ? itemStack : ItemStack.EMPTY;
+            boolean fortune = enchantment.is(Enchantments.BLOCK_FORTUNE);
+            *///?} else if >=1.21 {
             /*boolean fortune = enchantment.is(Enchantments.BLOCK_FORTUNE);
             *///?} else {
             boolean fortune = enchantment == Enchantments.BLOCK_FORTUNE;
@@ -291,7 +303,7 @@ public class ItemAndBlockBehaviorMixin {
                         /*var omniTool = EnchantmentInit.holder(EnchantmentInit.OMNI_TOOL);
                         if (omniTool == null) return;
                         if (this.enchantworks_enchant$thirdSlotInputWasBook || result.is(Items.BOOK) || result.is(Items.ENCHANTED_BOOK)) {
-                            this.enchantSlots.setItem(0, EnchantedBookItem.createForEnchantment(new EnchantmentInstance(omniTool, 1)));
+                            this.enchantSlots.setItem(0, net.minecraft.world.item.EnchantedBookItem.createForEnchantment(new EnchantmentInstance(omniTool, 1)));
                         } else {
                             var enchantments = new net.minecraft.world.item.enchantment.ItemEnchantments.Mutable(
                                     net.minecraft.world.item.enchantment.ItemEnchantments.EMPTY);

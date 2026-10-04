@@ -209,13 +209,28 @@ public class SmelterEventHandler {
     //?}
 
     private static SmeltResult processSingle(Level level, ItemStack stack) {
-        //? if >=1.21 {
+        // 26.1 keeps recipes on the server level and builds results from the input.
+        //? if >=26.1 {
+        /*if (!(level instanceof net.minecraft.server.level.ServerLevel serverLevel)) {
+            return SmeltResult.unchanged(stack);
+        }
+        var input = new net.minecraft.world.item.crafting.SingleRecipeInput(stack);
+        var recipeOptional = serverLevel.recipeAccess().getRecipeFor(RecipeType.SMELTING, input, level);
+        if (recipeOptional.isEmpty()) {
+            return SmeltResult.unchanged(stack);
+        }
+        var recipe = recipeOptional.get().value();
+        ItemStack result = recipe.assemble(input).copy();
+        float recipeExperience = recipe.experience();
+        *///?} else if >=1.21 {
         /*var recipeOptional = level.getRecipeManager().getRecipeFor(RecipeType.SMELTING,
                 new net.minecraft.world.item.crafting.SingleRecipeInput(stack), level);
         if (recipeOptional.isEmpty()) {
             return SmeltResult.unchanged(stack);
         }
         var recipe = recipeOptional.get().value();
+        ItemStack result = recipe.getResultItem(level.registryAccess()).copy();
+        float recipeExperience = recipe.getExperience();
         *///?} else {
         SimpleContainer container = new SimpleContainer(stack);
         var recipeOptional = level.getRecipeManager().getRecipeFor(RecipeType.SMELTING, container, level);
@@ -224,8 +239,9 @@ public class SmelterEventHandler {
         }
 
         var recipe = recipeOptional.get();
-        //?}
         ItemStack result = recipe.getResultItem(level.registryAccess()).copy();
+        float recipeExperience = recipe.getExperience();
+        //?}
         if (result.isEmpty()) {
             return SmeltResult.unchanged(stack);
         }
@@ -234,7 +250,7 @@ public class SmelterEventHandler {
         long outputCount = (long) stack.getCount() * result.getCount() * multiplier;
         result.setCount((int) Math.min(Integer.MAX_VALUE, outputCount));
 
-        double experience = recipe.getExperience()
+        double experience = recipeExperience
                 * stack.getCount()
                 * Math.max(0.0D, AnvilEnchantmentConfig.smelterExpMultiplier);
         return new SmeltResult(result, experience, true);
@@ -247,7 +263,7 @@ public class SmelterEventHandler {
 
         int amount = Mth.floor(experience);
         double fraction = experience - amount;
-        if (fraction > 0.0D && serverLevel.random.nextDouble() < fraction) {
+        if (fraction > 0.0D && serverLevel.getRandom().nextDouble() < fraction) {
             amount++;
         }
         if (amount > 0) {

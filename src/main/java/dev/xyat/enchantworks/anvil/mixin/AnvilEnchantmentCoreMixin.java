@@ -41,9 +41,16 @@ public class AnvilEnchantmentCoreMixin {
     public abstract static class AnvilMenuFix extends ItemCombinerMenu {
         @Shadow @Final private DataSlot cost;
 
+        //? if >=26.1 {
+        /*public AnvilMenuFix(@Nullable MenuType<?> type, int containerId, Inventory playerInventory, ContainerLevelAccess access,
+                            net.minecraft.world.inventory.ItemCombinerMenuSlotDefinition slots) {
+            super(type, containerId, playerInventory, access, slots);
+        }
+        *///?} else {
         public AnvilMenuFix(@Nullable MenuType<?> type, int containerId, Inventory playerInventory, ContainerLevelAccess access) {
             super(type, containerId, playerInventory, access);
         }
+        //?}
 
         @ModifyConstant(method = "createResult", constant = @Constant(intValue = 40), require = 0)
         private int enchantworks_enchant$removeLevelCap(int old) {
@@ -312,4 +319,3 @@ public class AnvilEnchantmentCoreMixin {
         //?}
     }
 }
-

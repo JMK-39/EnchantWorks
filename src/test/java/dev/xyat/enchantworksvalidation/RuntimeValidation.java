@@ -72,8 +72,10 @@ public final class RuntimeValidation {
         require(!book.isEmpty() && EnchantmentInit.levelIncludingStored(book, EnchantmentInit.OMNI_TOOL) == 1
                 && EnchantmentInit.levelOn(book, EnchantmentInit.OMNI_TOOL) == 0, "omni tool book stores the enchantment");
 
-        require(server.getRecipeManager().byKey(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(
-                "enchantworks", "omni_tool_netherite")).isPresent(), "omni tool recipe loaded");
+        // Recipe ids are locations up to 1.21.1 and keys on 26.1; both print the namespaced id.
+        require(server.getRecipeManager().getRecipes().stream().anyMatch(recipe ->
+                recipe.id().toString().contains("enchantworks:omni_tool_netherite")
+                        && recipe.value() instanceof dev.xyat.enchantworks.enchantment.recipe.OmniToolRecipe), "omni tool recipe loaded");
 
         com.mojang.logging.LogUtils.getLogger().info("ENCHANTWORKS_RUNTIME_VALIDATION_PASS: enchantments, tags, item rules, levels and recipe");
     }

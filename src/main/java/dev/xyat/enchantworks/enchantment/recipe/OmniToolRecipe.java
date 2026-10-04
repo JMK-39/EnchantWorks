@@ -1,6 +1,118 @@
 package dev.xyat.enchantworks.enchantment.recipe;
 
-//? if >=1.21 {
+//? if >=26.1 {
+/*import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.xyat.enchantworks.enchantment.init.EnchantmentInit;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.PlacementInfo;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/^* Shapeless recipe whose result is an Omni Tool book; it only matches while the enchantment is enabled. ^/
+public class OmniToolRecipe implements CraftingRecipe {
+    private static final MapCodec<OmniToolRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+            Codec.STRING.optionalFieldOf("group", "").forGetter(recipe -> recipe.group),
+            Ingredient.CODEC.listOf().fieldOf("ingredients").flatXmap(
+                    list -> list.isEmpty()
+                            ? DataResult.<List<Ingredient>>error(() -> "No ingredients for the Omni Tool recipe")
+                            : DataResult.success(list),
+                    DataResult::success
+            ).forGetter(recipe -> recipe.ingredients)
+    ).apply(instance, OmniToolRecipe::new));
+
+    private static final StreamCodec<RegistryFriendlyByteBuf, OmniToolRecipe> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.STRING_UTF8, recipe -> recipe.group,
+            Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list()), recipe -> recipe.ingredients,
+            OmniToolRecipe::new
+    );
+
+    /^* 26.1 serializers are plain records of the codecs. ^/
+    public static final RecipeSerializer<OmniToolRecipe> SERIALIZER = new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
+
+    private final String group;
+    private final List<Ingredient> ingredients;
+    private PlacementInfo placementInfo;
+
+    public OmniToolRecipe(String group, List<Ingredient> ingredients) {
+        this.group = group;
+        this.ingredients = List.copyOf(ingredients);
+    }
+
+    @Override
+    public boolean matches(@NotNull CraftingInput input, @NotNull Level level) {
+        if (!EnchantmentInit.isEnabled(EnchantmentInit.OMNI_TOOL)) return false;
+        List<ItemStack> inputs = new ArrayList<>();
+        for (int i = 0; i < input.size(); i++) {
+            ItemStack stack = input.getItem(i);
+            if (!stack.isEmpty()) inputs.add(stack);
+        }
+        if (inputs.size() != this.ingredients.size()) return false;
+
+        for (Ingredient ingredient : this.ingredients) {
+            boolean found = false;
+            for (int i = 0; i < inputs.size(); i++) {
+                if (ingredient.test(inputs.get(i))) {
+                    inputs.remove(i);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) return false;
+        }
+        return true;
+    }
+
+    @Override
+    public @NotNull ItemStack assemble(@NotNull CraftingInput input) {
+        if (!EnchantmentInit.isEnabled(EnchantmentInit.OMNI_TOOL)) {
+            return ItemStack.EMPTY;
+        }
+        return EnchantmentInit.book(EnchantmentInit.OMNI_TOOL, 1);
+    }
+
+    @Override
+    public boolean showNotification() {
+        return true;
+    }
+
+    @Override
+    public @NotNull String group() {
+        return this.group;
+    }
+
+    @Override
+    public @NotNull RecipeSerializer<OmniToolRecipe> getSerializer() {
+        return SERIALIZER;
+    }
+
+    @Override
+    public @NotNull PlacementInfo placementInfo() {
+        if (this.placementInfo == null) {
+            this.placementInfo = PlacementInfo.create(this.ingredients);
+        }
+        return this.placementInfo;
+    }
+
+    @Override
+    public @NotNull CraftingBookCategory category() {
+        return CraftingBookCategory.MISC;
+    }
+}
+*///?} else if >=1.21 {
 /*import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
