@@ -5,6 +5,8 @@
 - Anvil whitelist, blacklist and disabled-enchantment rules, the anvil level cap, cheap renaming, tax-free levels, infinity bows and buckets, Channeling II without a thunderstorm, the Omni Tool roll at the enchanting table and the Omni Tool recipe work on every version.
 - Default Smelter output rules use the c:ores and c:raw_materials tags on NeoForge.
 - Fixed: the 1.20.1 mods.toml now carries the real mod version instead of a literal placeholder.
+- Fixed: tax-free levels now also apply at the enchanting table. The hook targeted a method name that does not exist, so until now enchanting always took the full levels.
+- Fixed: items allowed by the enchantment whitelist can now be enchanted at the enchanting table (enchantability 10), as the whitelist rules intended; the hooks were never registered before.
 - Checked on 1.21.1 and 26.1.2 servers (enchantments, tags, item rules, levels and recipe) and by joining a 26.1.2 world.
 
 - 新增 NeoForge 1.21.1 与 NeoForge 26.1.2 支持，与 Forge 1.20.1 并存（Java 21；26.1.2 为 Java 25；需要 KineticCore 26.10.3+）。JAR 命名为 enchantworks-<加载器>-<MC版本>-<版本>.jar。
@@ -12,6 +14,8 @@
 - 铁砧白名单、黑名单与禁用附魔规则、铁砧等级上限、廉价改名、免税等级、无限弓与无限桶、无雷暴的引雷 II、附魔台的万能工具判定以及万能工具配方在所有版本中均可使用。
 - NeoForge 版本中熔炼默认产出规则改用 c:ores 与 c:raw_materials 标签。
 - 修复：1.20.1 的 mods.toml 现在写入真实模组版本，不再是字面占位符。
+- 修复：免税等级现在也作用于附魔台。原钩子指向了不存在的方法名，因此此前附魔台始终按完整等级扣除经验。
+- 修复：附魔白名单允许的物品现在可以在附魔台附魔（附魔能力 10），符合白名单规则的本意；相关钩子此前从未注册。
 - 已在 1.21.1 与 26.1.2 服务端中检查（附魔、标签、物品规则、等级与配方），并在 26.1.2 中进入世界确认。
 
 ---

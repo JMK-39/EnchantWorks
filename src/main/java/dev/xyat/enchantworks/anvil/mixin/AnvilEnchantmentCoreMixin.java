@@ -124,7 +124,7 @@ public class AnvilEnchantmentCoreMixin {
 
     @Mixin(value = Player.class, priority = 2000)
     public abstract static class PlayerFix {
-        @ModifyArg(method = "onEnchantmentItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;giveExperienceLevels(I)V"), index = 0, require = 0)
+        @ModifyArg(method = "onEnchantmentPerformed", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;giveExperienceLevels(I)V"), index = 0, require = 0)
         private int enchantworks_enchant$flattenEnchantmentCost(int levels) {
             if (!AnvilEnchantmentConfig.enableTaxFreeLevels) return levels;
             TaxFreeLevelsLogic.applyFlattenedXpCost((Player) (Object) this, -levels);
@@ -318,4 +318,23 @@ public class AnvilEnchantmentCoreMixin {
         }
         //?}
     }
+
+    // 26.1 keeps enchantability in the enchantable item component, read only by these two EnchantmentHelper
+    // methods; whitelisted items get the value 10 the 1.20.1 and 1.21 hooks give through Item#getEnchantmentValue.
+    //? if >=26.1 {
+    /*@Mixin(value = EnchantmentHelper.class, priority = 2000)
+    public static class EnchantableFix {
+        @com.llamalad7.mixinextras.injector.ModifyExpressionValue(
+                method = {"getEnchantmentCost", "selectEnchantment"},
+                at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;get(Lnet/minecraft/core/component/DataComponentType;)Ljava/lang/Object;"),
+                require = 0)
+        private static Object enchantworks_enchant$whitelistedEnchantable(Object value,
+                @com.llamalad7.mixinextras.sugar.Local(argsOnly = true) ItemStack stack) {
+            if (value == null && AnvilEnchantmentConfig.hasExplicitAllowRuleForStack(stack)) {
+                return new net.minecraft.world.item.enchantment.Enchantable(10);
+            }
+            return value;
+        }
+    }
+    *///?}
 }
