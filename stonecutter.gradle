@@ -1,0 +1,131 @@
+plugins {
+    id 'dev.kikugie.stonecutter'
+    id 'net.neoforged.moddev' version '2.0.148' apply false
+    id 'net.neoforged.moddev.legacyforge' version '2.0.148' apply false
+}
+
+// The node whose code is currently in src/. Switch it from IDEA's "stonecutter" task group
+// before editing code for another version.
+stonecutter.active '1.20.1-forge'
+
+stonecutter.parameters {
+    String loader = current.project.substring(current.project.indexOf('-') + 1)
+    // Enables `//? if forge {` and `//? if neoforge {` in versioned comments.
+    constants.match(loader, 'forge', 'neoforge')
+
+    // Forge types that NeoForge only moved or renamed. src/ keeps the Forge names; NeoForge nodes get these
+    // replaced, so only real API differences need `//? if forge {` blocks.
+    // Replacements also run backwards when the active version switches back, so every target must be specific:
+    // a bare 'NeoForge' would also rewrite class names and comments that mention NeoForge.
+    replacements.string(loader == 'neoforge') { spec ->
+        spec.replace 'net.minecraftforge.api.distmarker.', 'net.neoforged.api.distmarker.'
+        spec.replace 'net.minecraftforge.eventbus.api.', 'net.neoforged.bus.api.'
+        spec.replace 'net.minecraftforge.fml.', 'net.neoforged.fml.'
+        spec.replace 'net.minecraftforge.client.event.', 'net.neoforged.neoforge.client.event.'
+        spec.replace 'net.minecraftforge.client.settings.', 'net.neoforged.neoforge.client.settings.'
+        spec.replace 'net.minecraftforge.event.', 'net.neoforged.neoforge.event.'
+        spec.replace 'net.minecraftforge.common.', 'net.neoforged.neoforge.common.'
+        spec.replace 'net.minecraftforge.fluids.', 'net.neoforged.neoforge.fluids.'
+        spec.replace 'net.minecraftforge.items.', 'net.neoforged.neoforge.items.'
+        spec.replace 'net.minecraftforge.server.', 'net.neoforged.neoforge.server.'
+        spec.replace 'net.minecraftforge.registries.DeferredRegister', 'net.neoforged.neoforge.registries.DeferredRegister'
+        // Longer than the net.minecraftforge.common. prefix above, so it wins for this import.
+        spec.replace 'net.minecraftforge.common.MinecraftForge;', 'net.neoforged.neoforge.common.NeoForge;'
+        spec.replace 'MinecraftForge.EVENT_BUS', 'NeoForge.EVENT_BUS'
+        spec.replace 'ForgeConfigSpec', 'ModConfigSpec'
+    }
+
+    // Classes and methods that Minecraft or NeoForge only renamed or moved between 1.21.2 and 26.1, the same
+    // rules KineticCore uses. Whole words or exact calls only, because they also run backwards on older nodes.
+    // Classes whose API changed as well are handled in code with `//? if >=26.1 {` blocks.
+    replacements.regex(loader == 'neoforge' && eval(current.version, '>=26.1')) { spec ->
+        def rename = { String from, String to ->
+            spec.replace "\\b${from.replace('.', '\\.')}\\b", to, "\\b${to.replace('.', '\\.')}\\b", from
+        }
+        rename 'ResourceLocation', 'Identifier'
+        rename 'GuiGraphics', 'GuiGraphicsExtractor'
+        rename 'MobSpawnType', 'EntitySpawnReason'
+        rename 'DimensionTransition', 'TeleportTransition'
+        rename 'net.minecraft.Util', 'net.minecraft.util.Util'
+        rename 'net.minecraft.client.GuiMessage', 'net.minecraft.client.multiplayer.chat.GuiMessage'
+        rename 'net.minecraft.client.GuiMessageTag', 'net.minecraft.client.multiplayer.chat.GuiMessageTag'
+        rename 'net.minecraft.client.renderer.RenderType', 'net.minecraft.client.renderer.rendertype.RenderType'
+        rename 'net.minecraft.world.level.GameRules', 'net.minecraft.world.level.gamerules.GameRules'
+        rename 'net.neoforged.neoforge.common.util.TriState', 'net.minecraft.util.TriState'
+        rename 'ClickType', 'ContainerInput'
+        rename 'RegisterClientReloadListenersEvent', 'AddClientReloadListenersEvent'
+        rename 'AddReloadListenerEvent', 'AddServerReloadListenersEvent'
+
+        def call = { String from, String to ->
+            spec.replace java.util.regex.Pattern.quote(from), to, java.util.regex.Pattern.quote(to), from
+        }
+        // Registry keys: location() became identifier(); TagKey keeps location().
+        call 'dimension().location()', 'dimension().identifier()'
+        call 'getKey().location()', 'getKey().identifier()'
+        call 'key.location()', 'key.identifier()'
+        call 'OVERWORLD.location()', 'OVERWORLD.identifier()'
+        call 'ResourceKey::location', 'ResourceKey::identifier'
+        call '.moveTo(', '.snapTo('
+        call '.getMinBuildHeight()', '.getMinY()'
+        call 'level.getMaxBuildHeight()', '(level.getMaxY() + 1)'
+        call '.registryOrThrow(', '.lookupOrThrow('
+        call 'registryAccess().registry(', 'registryAccess().lookup('
+        call 'TagParser.parseTag(', 'TagParser.parseCompoundFully('
+        call 'writeResourceLocation(', 'writeIdentifier('
+        call 'readResourceLocation(', 'readIdentifier('
+        call 'FMLEnvironment.dist', 'FMLEnvironment.getDist()'
+        call 'PacketDistributor.sendToServer(', 'net.neoforged.neoforge.client.network.ClientPacketDistributor.sendToServer('
+        // Click and hover events are one record per action on 26.1.
+        call 'new ClickEvent(ClickEvent.Action.RUN_COMMAND, ', 'new ClickEvent.RunCommand('
+        call 'new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, ', 'new ClickEvent.SuggestCommand('
+        call 'new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, ', 'new ClickEvent.CopyToClipboard('
+        call 'new HoverEvent(HoverEvent.Action.SHOW_TEXT, ', 'new HoverEvent.ShowText('
+        // Widget methods.
+        rename 'renderWidget', 'extractWidgetRenderState'
+        rename 'getScrollbarPosition', 'scrollBarX'
+        rename 'getScrollAmount', 'scrollAmount'
+        rename 'getMaxScroll', 'maxScrollAmount'
+
+        // CompoundTag and ListTag getters return Optional since 1.21.5; the ...Or forms keep the old defaults.
+        def nbt = '\\b(tag|entityTag|stackTag|forgeData|persistentData|root|nbt|compound|data|list|getPersistentData\\(\\))'
+        def getter = { String from, String to, String defaultArgument ->
+            spec.replace "${nbt}\\.${from}\\(([^()]*)\\)", "\$1.${to}(\$2${defaultArgument})",
+                    "${nbt}\\.${to}\\(([^()]*?)${java.util.regex.Pattern.quote(defaultArgument)}\\)", "\$1.${from}(\$2)"
+        }
+        getter 'getInt', 'getIntOr', ', 0'
+        getter 'getLong', 'getLongOr', ', 0L'
+        getter 'getBoolean', 'getBooleanOr', ', false'
+        getter 'getString', 'getStringOr', ', ""'
+        getter 'getDouble', 'getDoubleOr', ', 0D'
+        getter 'getFloat', 'getFloatOr', ', 0F'
+        getter 'getCompound', 'getCompoundOrEmpty', ''
+        ['COMPOUND': 'CompoundTag', 'STRING': 'StringTag', 'LIST': 'ListTag'].each { type, tagClass ->
+            spec.replace "\\b([A-Za-z_]\\w*(?:\\(\\))?)\\.contains\\(([^(),]*), Tag\\.TAG_${type}\\)",
+                    "(\$1.get(\$2) instanceof net.minecraft.nbt.${tagClass})",
+                    "\\(([A-Za-z_]\\w*(?:\\(\\))?)\\.get\\(([^(),]*)\\) instanceof net\\.minecraft\\.nbt\\.${tagClass}\\)",
+                    "\$1.contains(\$2, Tag.TAG_${type})"
+        }
+        spec.replace '\\.getList\\(([^(),]*), Tag\\.(TAG_[A-Z]+)\\)', '.getListOrEmpty($1)/*$2*/',
+                '\\.getListOrEmpty\\(([^(),]*)\\)/\\*(TAG_[A-Z]+)\\*/', '.getList($1, Tag.$2)'
+        // Inventory slots, GameProfile records and permission sets.
+        call 'getInventory().items', 'getInventory().getNonEquipmentItems()'
+        call 'getGameProfile().getName()', 'getGameProfile().name()'
+        call 'profile.getName()', 'profile.name()'
+        call 'profile.getId()', 'profile.id()'
+        call 'getProfile().getName()', 'getProfile().name()'
+        call 'getProfile().getId()', 'getProfile().id()'
+        // Entity.getServer() is gone; the level knows its server.
+        call 'player.getServer()', 'player.level().getServer()'
+        call '.withPermission(2)', '.withPermission(net.minecraft.server.permissions.LevelBasedPermissionSet.GAMEMASTER)'
+        call '.withPermission(4)', '.withPermission(net.minecraft.server.permissions.LevelBasedPermissionSet.OWNER)'
+        call '.hasPermission(2)', '.permissions().hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER)'
+        call '.hasPermissions(2)', '.permissions().hasPermission(new net.minecraft.server.permissions.Permission.HasCommandLevel(net.minecraft.server.permissions.PermissionLevel.GAMEMASTERS))'
+        call '.hasPermission(3)', '.permissions().hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_ADMIN)'
+    }
+}
+
+tasks.register('buildAll') {
+    group = 'build'
+    description = 'Builds and checks the release JAR of every enabled Minecraft version.'
+    dependsOn stonecutter.versions.collect { ":${it.project}:build" }
+}

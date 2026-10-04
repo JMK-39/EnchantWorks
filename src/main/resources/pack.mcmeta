@@ -1,6 +1,6 @@
 {
   "pack": {
     "description": "Enchant Works resources",
-    "pack_format": 15
+    ${pack_version_fields}
   }
 }
