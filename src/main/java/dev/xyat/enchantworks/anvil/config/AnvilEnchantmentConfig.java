@@ -495,7 +495,28 @@ public class AnvilEnchantmentConfig {
 
     public static boolean isEnchantmentDisabled(Enchantment e) {
         if (e == null) return false;
-        ResourceLocation rl = KineticRegistries.enchantments().id(e);
+        return isEnchantmentDisabled(KineticRegistries.enchantments().id(e));
+    }
+
+    //? if >=1.21 {
+    /*public static boolean isEnchantmentDisabled(net.minecraft.resources.ResourceKey<Enchantment> key) {
+        return isEnchantmentDisabled(key.location());
+    }
+
+    public static boolean isEnchantmentDisabled(net.minecraft.core.Holder<Enchantment> enchantment) {
+        return enchantment.unwrapKey().map(key -> isEnchantmentDisabled(key.location())).orElse(false);
+    }
+
+    public static boolean isExplicitlyAllowed(ItemStack stack, net.minecraft.core.Holder<Enchantment> enchantment) {
+        return checkParsedRules(stack, enchantment.unwrapKey().map(key -> key.location()).orElse(null), WHITELIST_CACHE);
+    }
+
+    public static boolean isExplicitlyDenied(ItemStack stack, net.minecraft.core.Holder<Enchantment> enchantment) {
+        return checkParsedRules(stack, enchantment.unwrapKey().map(key -> key.location()).orElse(null), BLACKLIST_CACHE);
+    }
+    *///?}
+
+    public static boolean isEnchantmentDisabled(ResourceLocation rl) {
         if (rl == null) return false;
         String id = rl.toString();
 
@@ -622,6 +643,12 @@ public class AnvilEnchantmentConfig {
         return SIXTH_SENSE_CUSTOM_CACHE.contains(id);
     }
 
+    //? if >=1.21 {
+    /*public static boolean canLeechEffect(net.minecraft.core.Holder<MobEffect> effect) {
+        return canLeechEffect(effect.value());
+    }
+    *///?}
+
     public static boolean canLeechEffect(MobEffect effect) {
         if (effect == null || !effect.isBeneficial()) return false;
         ResourceLocation id = KineticRegistries.mobEffects().id(effect);
@@ -631,10 +658,14 @@ public class AnvilEnchantmentConfig {
     }
 
     private static boolean checkParsedRules(ItemStack stack, Enchantment enchantment, List<ParsedRule> cache) {
-        if (stack.isEmpty() || cache.isEmpty() || enchantment == null) return false;
+        if (enchantment == null) return false;
+        return checkParsedRules(stack, KineticRegistries.enchantments().id(enchantment), cache);
+    }
+
+    private static boolean checkParsedRules(ItemStack stack, ResourceLocation enchantRL, List<ParsedRule> cache) {
+        if (stack.isEmpty() || cache.isEmpty() || enchantRL == null) return false;
         ResourceLocation itemRL = KineticRegistries.items().id(stack.getItem());
-        ResourceLocation enchantRL = KineticRegistries.enchantments().id(enchantment);
-        if (itemRL == null || enchantRL == null) return false;
+        if (itemRL == null) return false;
         for (ParsedRule rule : cache) {
             if (rule.matches(stack, itemRL.toString(), itemRL.getNamespace(), enchantRL.toString())) return true;
         }

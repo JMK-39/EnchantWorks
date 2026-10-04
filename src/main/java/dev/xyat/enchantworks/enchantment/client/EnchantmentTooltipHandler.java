@@ -1,6 +1,7 @@
 package dev.xyat.enchantworks.enchantment.client;
 
 import dev.xyat.enchantworks.anvil.config.AnvilEnchantmentConfig;
+import dev.xyat.enchantworks.enchantment.init.EnchantmentInit;
 import dev.xyat.kineticcore.api.client.tooltip.KineticItemTooltips;
 import dev.xyat.kineticcore.api.text.KineticI18n;
 import net.minecraft.network.chat.Component;
@@ -9,12 +10,9 @@ import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 
 import java.util.List;
-import java.util.Map;
 
 public final class EnchantmentTooltipHandler {
     private static boolean initialized;
@@ -31,15 +29,14 @@ public final class EnchantmentTooltipHandler {
     private static void buildTooltip(ItemStack stack, List<Component> tooltip) {
         if (stack.isEmpty()) return;
 
-        Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(stack);
         Item item = stack.getItem();
 
-        int channelingLevel = enchantments.getOrDefault(Enchantments.CHANNELING, 0);
+        int channelingLevel = EnchantmentInit.levelIncludingStored(stack, Enchantments.CHANNELING);
         if (!AnvilEnchantmentConfig.isEnchantmentDisabled(Enchantments.CHANNELING) && channelingLevel >= 2) {
             tooltip.add(KineticI18n.translatable("enchantment.enchantworks.channeling2.desc"));
         }
 
-        int infinityLevel = enchantments.getOrDefault(Enchantments.INFINITY_ARROWS, 0);
+        int infinityLevel = EnchantmentInit.levelIncludingStored(stack, Enchantments.INFINITY_ARROWS);
         if (!AnvilEnchantmentConfig.isEnchantmentDisabled(Enchantments.INFINITY_ARROWS) && infinityLevel >= 1) {
             if (item instanceof BowItem || item == Items.ENCHANTED_BOOK) {
                 addEnhancedTooltip(tooltip, "infinity_bow");

@@ -17,7 +17,8 @@
     "ItemAndBlockBehaviorMixin$ItemStackFix",
     "ItemAndBlockBehaviorMixin$ServerPlayerGameModeFix",
     "ItemAndBlockBehaviorMixin$SpawnerBlockFix",
-    "ItemAndBlockBehaviorMixin$ThrownTridentFix"
+    "ItemAndBlockBehaviorMixin$ThrownTridentFix",
+    "ItemAndBlockBehaviorMixin$WeatherCheckFix"
   ],
   "client": [
     "client.EntityGlowingMixin"

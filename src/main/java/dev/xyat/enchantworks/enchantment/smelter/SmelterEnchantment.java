@@ -1,3 +1,5 @@
+// 1.21 made enchantments data-driven: data/enchantworks/enchantment/<id>.json defines them there.
+//? if <1.21 {
 package dev.xyat.enchantworks.enchantment.smelter;
 
 import net.minecraft.world.entity.EquipmentSlot;
@@ -26,3 +28,4 @@ public class SmelterEnchantment extends Enchantment {
         return super.checkCompatibility(other) && other != Enchantments.SILK_TOUCH;
     }
 }
+//?}

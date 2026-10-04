@@ -61,6 +61,9 @@ ext.kineticMixinConfigs = mixinConfigList
 
 sourceSets.main.resources {
     srcDir rootProject.file('src/generated/resources')
+    // Data whose folder or format differs per Minecraft version (recipes, enchantments, tags) lives only in
+    // versions/<node>/resources and is packaged into that node's JAR alone.
+    srcDir rootProject.file("versions/${project.name}/resources")
 }
 
 repositories {
@@ -249,6 +252,26 @@ apply from: rootProject.file('gradle/kinetic-addon-architecture.gradle')
 ext.kineticArchitectureAllow = [:]
 apply from: rootProject.file('gradle/kinetic-addon-reobf-verification.gradle')
 apply from: rootProject.file('gradle/kinetic-core-dependency.gradle')
+
+// Explicit test fixture; never included in release artifacts. Dropped into a dev run's mods folder, it checks the
+// data-driven enchantments, tags and recipe once the server has started.
+if (pLoader == 'neoforge') {
+    def metadata = layout.buildDirectory.dir('runtime-validation')
+    def writeMetadata = tasks.register('writeRuntimeValidationMetadata') {
+        outputs.dir metadata
+        doLast {
+            File target = new File(metadata.get().asFile, 'META-INF/neoforge.mods.toml')
+            target.parentFile.mkdirs()
+            target.setText('modLoader="javafml"\nloaderVersion="[1,)"\nlicense="LGPLv3"\n[[mods]]\nmodId="enchantworks_validation"\nversion="1.0.0"\ndisplayName="EnchantWorks runtime validation"\n', 'UTF-8')
+        }
+    }
+    tasks.register('runtimeValidationJar', Jar) {
+        dependsOn 'testClasses', writeMetadata
+        from(sourceSets.test.output) { include 'dev/xyat/enchantworksvalidation/*.class' }
+        from metadata
+        archiveFileName = 'enchantworks-validation.jar'
+    }
+}
 
 // English and Chinese must expose exactly the same authored translation keys.
 apply from: rootProject.file('gradle/kinetic-language-validation.gradle')

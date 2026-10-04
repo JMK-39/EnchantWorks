@@ -1,6 +1,7 @@
 package dev.xyat.enchantworks.enchantment.mixin;
 
 import dev.xyat.enchantworks.anvil.config.AnvilEnchantmentConfig;
+import dev.xyat.enchantworks.enchantment.init.EnchantmentInit;
 
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -42,7 +43,7 @@ public class InfinityBucketMixins {
     public static class BucketItemFix {
         @Inject(method = "getEmptySuccessItem", at = @At("HEAD"), cancellable = true)
         private static void enchantworks_enchant$infiniteEmptyResult(ItemStack pBucketStack, Player pPlayer, CallbackInfoReturnable<ItemStack> cir) {
-            if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.INFINITY_ARROWS, pBucketStack) > 0) {
+            if (EnchantmentInit.levelOn(pBucketStack, Enchantments.INFINITY_ARROWS) > 0) {
                 cir.setReturnValue(pBucketStack.copy());
             }
         }
@@ -50,7 +51,7 @@ public class InfinityBucketMixins {
         @Inject(method = "use", at = @At("RETURN"), cancellable = true)
         private void enchantworks_enchant$keepInfiniteBucket(Level pLevel, Player pPlayer, InteractionHand pHand, CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir) {
             ItemStack original = pPlayer.getItemInHand(pHand);
-            if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.INFINITY_ARROWS, original) > 0) {
+            if (EnchantmentInit.levelOn(original, Enchantments.INFINITY_ARROWS) > 0) {
                 InteractionResultHolder<ItemStack> result = cir.getReturnValue();
                 if (result.getResult().consumesAction()) {
                     cir.setReturnValue(new InteractionResultHolder<>(result.getResult(), original.copy()));
@@ -63,14 +64,14 @@ public class InfinityBucketMixins {
     public static class ItemUtilsFix {
         @Inject(method = "createFilledResult(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/item/ItemStack;Z)Lnet/minecraft/world/item/ItemStack;", at = @At("HEAD"), cancellable = true)
         private static void enchantworks_enchant$lockInfinityBucketState4(ItemStack pEmptyStack, Player pPlayer, ItemStack pFilledStack, boolean preventDup, CallbackInfoReturnable<ItemStack> cir) {
-            if (pEmptyStack.getItem() instanceof BucketItem && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.INFINITY_ARROWS, pEmptyStack) > 0) {
+            if (pEmptyStack.getItem() instanceof BucketItem && EnchantmentInit.levelOn(pEmptyStack, Enchantments.INFINITY_ARROWS) > 0) {
                 cir.setReturnValue(pEmptyStack.copy());
             }
         }
 
         @Inject(method = "createFilledResult(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/item/ItemStack;", at = @At("HEAD"), cancellable = true)
         private static void enchantworks_enchant$lockInfinityBucketState3(ItemStack pEmptyStack, Player pPlayer, ItemStack pFilledStack, CallbackInfoReturnable<ItemStack> cir) {
-            if (pEmptyStack.getItem() instanceof BucketItem && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.INFINITY_ARROWS, pEmptyStack) > 0) {
+            if (pEmptyStack.getItem() instanceof BucketItem && EnchantmentInit.levelOn(pEmptyStack, Enchantments.INFINITY_ARROWS) > 0) {
                 cir.setReturnValue(pEmptyStack.copy());
             }
         }
@@ -78,6 +79,16 @@ public class InfinityBucketMixins {
 
     @Mixin(Enchantment.class)
     public static class EnchantmentFix {
+        // Since 1.21 the anvil and enchanting table both ask Enchantment#isSupportedItem (through NeoForge's
+        // supportsEnchantment and isPrimaryItemFor); Infinity has no primary items, so this covers both.
+        //? if >=1.21 {
+        /*@Inject(method = "isSupportedItem", at = @At("HEAD"), cancellable = true)
+        private void enchantworks_enchant$allowInfinityBucket(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
+            if (stack.getItem() instanceof BucketItem && EnchantmentInit.isSame((Enchantment) (Object) this, Enchantments.INFINITY_ARROWS)) {
+                cir.setReturnValue(!AnvilEnchantmentConfig.isEnchantmentDisabled(Enchantments.INFINITY_ARROWS));
+            }
+        }
+        *///?} else {
         @Inject(method = "canEnchant", at = @At("HEAD"), cancellable = true)
         private void enchantworks_enchant$allowInfinityAnvil(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
             if ((Object) this == Enchantments.INFINITY_ARROWS && stack.getItem() instanceof BucketItem) {
@@ -91,6 +102,7 @@ public class InfinityBucketMixins {
                 cir.setReturnValue(!AnvilEnchantmentConfig.isEnchantmentDisabled(Enchantments.INFINITY_ARROWS));
             }
         }
+        //?}
     }
 
     @Mixin(Item.class)
@@ -115,7 +127,7 @@ public class InfinityBucketMixins {
 
         @Inject(method = "drain(Lnet/minecraftforge/fluids/FluidStack;Lnet/minecraftforge/fluids/capability/IFluidHandler$FluidAction;)Lnet/minecraftforge/fluids/FluidStack;", at = @At("RETURN"))
         private void restoreDrain1(FluidStack resource, IFluidHandler.FluidAction action, CallbackInfoReturnable<FluidStack> cir) {
-            if (action.execute() && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.INFINITY_ARROWS, this.enchantworks_enchant$savedContainer) > 0) {
+            if (action.execute() && EnchantmentInit.levelOn(this.enchantworks_enchant$savedContainer, Enchantments.INFINITY_ARROWS) > 0) {
                 this.container = this.enchantworks_enchant$savedContainer.copy();
             }
         }
@@ -127,7 +139,7 @@ public class InfinityBucketMixins {
 
         @Inject(method = "drain(ILnet/minecraftforge/fluids/capability/IFluidHandler$FluidAction;)Lnet/minecraftforge/fluids/FluidStack;", at = @At("RETURN"))
         private void restoreDrain2(int maxDrain, IFluidHandler.FluidAction action, CallbackInfoReturnable<FluidStack> cir) {
-            if (action.execute() && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.INFINITY_ARROWS, this.enchantworks_enchant$savedContainer) > 0) {
+            if (action.execute() && EnchantmentInit.levelOn(this.enchantworks_enchant$savedContainer, Enchantments.INFINITY_ARROWS) > 0) {
                 this.container = this.enchantworks_enchant$savedContainer.copy();
             }
         }
@@ -139,7 +151,7 @@ public class InfinityBucketMixins {
 
         @Inject(method = "fill", at = @At("RETURN"))
         private void restoreFill(FluidStack resource, IFluidHandler.FluidAction action, CallbackInfoReturnable<Integer> cir) {
-            if (action.execute() && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.INFINITY_ARROWS, this.enchantworks_enchant$savedContainer) > 0) {
+            if (action.execute() && EnchantmentInit.levelOn(this.enchantworks_enchant$savedContainer, Enchantments.INFINITY_ARROWS) > 0) {
                 this.container = this.enchantworks_enchant$savedContainer.copy();
             }
         }

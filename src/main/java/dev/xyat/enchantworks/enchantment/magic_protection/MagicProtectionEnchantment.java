@@ -1,3 +1,5 @@
+// 1.21 made enchantments data-driven: data/enchantworks/enchantment/<id>.json defines them there.
+//? if <1.21 {
 package dev.xyat.enchantworks.enchantment.magic_protection;
 
 import javax.annotation.Nonnull;
@@ -47,3 +49,4 @@ public class MagicProtectionEnchantment extends Enchantment {
         return !(other instanceof ProtectionEnchantment) && super.checkCompatibility(other);
     }
 }
+//?}

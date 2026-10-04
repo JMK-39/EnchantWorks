@@ -57,18 +57,45 @@ public class ItemAndBlockBehaviorMixin {
         @Redirect(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getProjectile(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/item/ItemStack;"), require = 0)
         private ItemStack enchantworks_enchant$allowDrawWithoutArrow(Player player, ItemStack shootable) {
             ItemStack projectile = player.getProjectile(shootable);
-            if (projectile.isEmpty() && shootable.getEnchantmentLevel(Enchantments.INFINITY_ARROWS) > 0) return new ItemStack(Items.ARROW);
+            if (projectile.isEmpty() && EnchantmentInit.levelOn(shootable, Enchantments.INFINITY_ARROWS) > 0) return new ItemStack(Items.ARROW);
             return projectile;
         }
 
         @Redirect(method = "releaseUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getProjectile(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/item/ItemStack;"), require = 0)
         private ItemStack enchantworks_enchant$fireWithoutArrow(Player player, ItemStack shootable) {
             ItemStack projectile = player.getProjectile(shootable);
-            if (projectile.isEmpty() && shootable.getEnchantmentLevel(Enchantments.INFINITY_ARROWS) > 0) return new ItemStack(Items.ARROW);
+            if (projectile.isEmpty() && EnchantmentInit.levelOn(shootable, Enchantments.INFINITY_ARROWS) > 0) return new ItemStack(Items.ARROW);
             return projectile;
         }
     }
 
+    // Channeling II strikes lightning without a thunderstorm. Up to 1.20.1 the trident itself checks the weather;
+    // since 1.21 Channeling is data whose lightning requires a weather_check condition, so that check is relaxed
+    // for a trident with Channeling II.
+    //? if >=1.21 {
+    /*@Mixin(value = net.minecraft.world.level.storage.loot.predicates.WeatherCheck.class, priority = 2000)
+    public static class WeatherCheckFix {
+        @Inject(method = "test(Lnet/minecraft/world/level/storage/loot/LootContext;)Z", at = @At("HEAD"), cancellable = true)
+        private void enchantworks_enchant$betterChanneling(net.minecraft.world.level.storage.loot.LootContext context,
+                                                           CallbackInfoReturnable<Boolean> cir) {
+            var self = (net.minecraft.world.level.storage.loot.predicates.WeatherCheck) (Object) this;
+            if (!self.isThundering().orElse(false) || self.isRaining().isPresent()
+                    || !AnvilEnchantmentConfig.isBetterChannelingEnabled()) return;
+            if (enchantworks_enchant$isChannelingTwoTrident(context.getParamOrNull(LootContextParams.THIS_ENTITY))
+                    || enchantworks_enchant$isChannelingTwoTrident(context.getParamOrNull(LootContextParams.DIRECT_ATTACKING_ENTITY))) {
+                cir.setReturnValue(true);
+            }
+        }
+
+        @Unique
+        private static boolean enchantworks_enchant$isChannelingTwoTrident(@org.jetbrains.annotations.Nullable net.minecraft.world.entity.Entity entity) {
+            return entity instanceof ThrownTrident trident
+                    && EnchantmentInit.levelOn(trident.getWeaponItem(), Enchantments.CHANNELING) >= 2;
+        }
+    }
+    *///?}
+
+    //? if <1.21 {
     @Mixin(value = ThrownTrident.class, priority = 2000)
     public abstract static class ThrownTridentFix extends AbstractArrow {
         protected ThrownTridentFix(EntityType<? extends AbstractArrow> type, Level level) { super(type, level); }
@@ -82,6 +109,7 @@ public class ItemAndBlockBehaviorMixin {
             return stack.getEnchantmentLevel(Enchantments.CHANNELING) >= 2 || level.isThundering();
         }
     }
+    //?}
 
     @Mixin(value = ItemStack.class, priority = 2000)
     public abstract static class ItemStackFix {
@@ -167,11 +195,20 @@ public class ItemAndBlockBehaviorMixin {
     public static class EnchantmentHelperFix {
         @Inject(method = "getItemEnchantmentLevel", at = @At("HEAD"), cancellable = true, require = 0)
         private static void enchantworks_enchant$disableFortuneForSmelter(
+                //? if >=1.21 {
+                /*net.minecraft.core.Holder<Enchantment> enchantment,
+                *///?} else {
                 Enchantment enchantment,
+                //?}
                 ItemStack stack,
                 CallbackInfoReturnable<Integer> cir
         ) {
-            if (enchantment == Enchantments.BLOCK_FORTUNE && SmelterEventHandler.shouldSuppressFortune(stack)) {
+            //? if >=1.21 {
+            /*boolean fortune = enchantment.is(Enchantments.BLOCK_FORTUNE);
+            *///?} else {
+            boolean fortune = enchantment == Enchantments.BLOCK_FORTUNE;
+            //?}
+            if (fortune && SmelterEventHandler.shouldSuppressFortune(stack)) {
                 cir.setReturnValue(0);
             }
         }
@@ -194,7 +231,11 @@ public class ItemAndBlockBehaviorMixin {
          * 命中后直接把第三档结果替换成“万能工具 I”，避免显示普通附魔但实际又要额外隐藏追加。
          */
         @Inject(method = "getEnchantmentList", at = @At("RETURN"), cancellable = true, require = 0)
+        //? if >=1.21 {
+        /*private void enchantworks_enchant$rollOmniToolOnThirdSlot(net.minecraft.core.RegistryAccess registries, ItemStack stack, int enchantmentSlot, int level, CallbackInfoReturnable<List<EnchantmentInstance>> cir) {
+        *///?} else {
         private void enchantworks_enchant$rollOmniToolOnThirdSlot(ItemStack stack, int enchantmentSlot, int level, CallbackInfoReturnable<List<EnchantmentInstance>> cir) {
+        //?}
             if (enchantmentSlot != 2) return;
             if (enchantworks_enchant$shouldSkipOmniRoll(stack, level)) return;
 
@@ -205,7 +246,11 @@ public class ItemAndBlockBehaviorMixin {
             float roll = enchantworks_enchant$deterministicOmniRoll(stack, enchantmentSlot, level, this.enchantmentSeed.get());
             if (roll >= chance) return;
 
+            //? if >=1.21 {
+            /*var omniTool = EnchantmentInit.holder(EnchantmentInit.OMNI_TOOL);
+            *///?} else {
             Enchantment omniTool = EnchantmentInit.get(EnchantmentInit.OMNI_TOOL);
+            //?}
             if (omniTool == null) return;
             List<EnchantmentInstance> result = new ArrayList<>();
             result.add(new EnchantmentInstance(omniTool, 1));
@@ -242,6 +287,19 @@ public class ItemAndBlockBehaviorMixin {
                 if (id == 2 && Boolean.TRUE.equals(cir.getReturnValue()) && this.enchantworks_enchant$thirdSlotShouldApplyOmni) {
                     ItemStack result = this.enchantSlots.getItem(0);
                     if (!result.isEmpty()) {
+                        //? if >=1.21 {
+                        /*var omniTool = EnchantmentInit.holder(EnchantmentInit.OMNI_TOOL);
+                        if (omniTool == null) return;
+                        if (this.enchantworks_enchant$thirdSlotInputWasBook || result.is(Items.BOOK) || result.is(Items.ENCHANTED_BOOK)) {
+                            this.enchantSlots.setItem(0, EnchantedBookItem.createForEnchantment(new EnchantmentInstance(omniTool, 1)));
+                        } else {
+                            var enchantments = new net.minecraft.world.item.enchantment.ItemEnchantments.Mutable(
+                                    net.minecraft.world.item.enchantment.ItemEnchantments.EMPTY);
+                            enchantments.set(omniTool, 1);
+                            EnchantmentHelper.setEnchantments(result, enchantments.toImmutable());
+                            this.enchantSlots.setItem(0, result);
+                        }
+                        *///?} else {
                         Enchantment omniTool = EnchantmentInit.get(EnchantmentInit.OMNI_TOOL);
                         if (omniTool == null) return;
                         if (this.enchantworks_enchant$thirdSlotInputWasBook || result.is(Items.BOOK) || result.is(Items.ENCHANTED_BOOK)) {
@@ -254,6 +312,7 @@ public class ItemAndBlockBehaviorMixin {
                             EnchantmentHelper.setEnchantments(enchantments, result);
                             this.enchantSlots.setItem(0, result);
                         }
+                        //?}
                         this.enchantSlots.setChanged();
                         ((EnchantmentMenu) (Object) this).broadcastChanges();
                     }
@@ -274,8 +333,13 @@ public class ItemAndBlockBehaviorMixin {
             if (!EnchantmentInit.isEnabled(EnchantmentInit.OMNI_TOOL)) return true;
             if (stack == null || stack.isEmpty()) return true;
             if (displayedLevel < 30) return true;
+            //? if >=1.21 {
+            /*var omniTool = EnchantmentInit.holder(EnchantmentInit.OMNI_TOOL);
+            return omniTool == null || (!enchantworks_enchant$isBookForEnchanting(stack) && !stack.supportsEnchantment(omniTool));
+            *///?} else {
             Enchantment omniTool = EnchantmentInit.get(EnchantmentInit.OMNI_TOOL);
             return omniTool == null || (!enchantworks_enchant$isBookForEnchanting(stack) && !omniTool.canApplyAtEnchantingTable(stack));
+            //?}
         }
 
         @Unique
@@ -328,6 +392,8 @@ public class ItemAndBlockBehaviorMixin {
         }
     }
 
+    // Since 1.21 NeoForge drops block and spawner experience through its drop event, where OmniToolEvent clears it.
+    //? if <1.21 {
     @Mixin(value = SpawnerBlock.class, priority = 2000)
     public static class SpawnerBlockFix {
         /*
@@ -346,6 +412,7 @@ public class ItemAndBlockBehaviorMixin {
             }
         }
     }
+    //?}
 
     @Mixin(value = ServerPlayerGameMode.class, priority = 2000)
     public static class ServerPlayerGameModeFix {
@@ -376,6 +443,7 @@ public class ItemAndBlockBehaviorMixin {
          * Forge/原版破坏流程里，方块经验最终可能从 ServerPlayerGameMode#destroyBlock 调用 Block#popExperience。
          * 对“万能工具强制掉落名单方块”这一类掉落，直接吞掉这次经验；普通破坏仍原样放行。
          */
+        //? if <1.21 {
         @Redirect(method = "destroyBlock",
                 at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;popExperience(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;I)V"),
                 require = 0)
@@ -385,6 +453,7 @@ public class ItemAndBlockBehaviorMixin {
             }
             block.popExperience(level, pos, amount);
         }
+        //?}
 
         @Inject(at = @At("RETURN"), method = "destroyBlock", require = 0)
         private void enchantworks_enchant$destroyBlockEnd(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {

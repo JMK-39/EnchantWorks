@@ -33,6 +33,23 @@ stonecutter.parameters {
         spec.replace 'net.minecraftforge.common.MinecraftForge;', 'net.neoforged.neoforge.common.NeoForge;'
         spec.replace 'MinecraftForge.EVENT_BUS', 'NeoForge.EVENT_BUS'
         spec.replace 'ForgeConfigSpec', 'ModConfigSpec'
+        // Mixin descriptors spell packages with slashes.
+        spec.replace 'net/minecraftforge/fluids/', 'net/neoforged/neoforge/fluids/'
+    }
+
+    // Names that changed in 1.21: vanilla enchantments became registry keys, short grass was renamed.
+    replacements.string(eval(current.version, '>=1.21')) { spec ->
+        spec.replace 'Enchantments.INFINITY_ARROWS', 'Enchantments.INFINITY'
+        spec.replace 'Enchantments.BLOCK_FORTUNE', 'Enchantments.FORTUNE'
+        spec.replace 'Blocks.GRASS)', 'Blocks.SHORT_GRASS)'
+        // NeoForge uses the shared c: tag namespace for ores, raw materials and storage blocks.
+        spec.replace '#forge:ores', '#c:ores'
+        spec.replace '#forge:raw_materials', '#c:raw_materials'
+        spec.replace '#forge:storage_blocks', '#c:storage_blocks'
+        // DamageSource.isIndirect() became isDirect().
+        spec.replace 'context.source().isIndirect()', '!context.source().isDirect()'
+        spec.replace 'ItemStack.isSameItemSameTags(', 'ItemStack.isSameItemSameComponents('
+        spec.replace 'outputStack.setRepairCost(0)', 'outputStack.set(net.minecraft.core.component.DataComponents.REPAIR_COST, 0)'
     }
 
     // Classes and methods that Minecraft or NeoForge only renamed or moved between 1.21.2 and 26.1, the same

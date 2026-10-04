@@ -2,6 +2,7 @@ package dev.xyat.enchantworks.anvil.mixin;
 
 import dev.xyat.enchantworks.anvil.config.AnvilEnchantmentConfig;
 import dev.xyat.enchantworks.anvil.util.TaxFreeLevelsLogic;
+import dev.xyat.enchantworks.enchantment.init.EnchantmentInit;
 import dev.xyat.kineticcore.api.registry.KineticRegistries;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -63,10 +64,17 @@ public class AnvilEnchantmentCoreMixin {
             ItemStack outputStack = this.resultSlots.getItem(0);
             if (outputStack.isEmpty()) return;
 
+            //? if >=1.21 {
+            /*var enchantments = EnchantmentHelper.getEnchantmentsForCrafting(outputStack).keySet();
+            if (enchantments.isEmpty()) return;
+
+            for (var enchantment : enchantments) {
+            *///?} else {
             Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(outputStack);
             if (enchantments.isEmpty()) return;
 
             for (Enchantment enchantment : enchantments.keySet()) {
+            //?}
                 if (AnvilEnchantmentConfig.isEnchantmentDisabled(enchantment)) {
                     this.enchantworks_enchant$invalidateResult();
                     return;
@@ -130,6 +138,8 @@ public class AnvilEnchantmentCoreMixin {
 
         @Inject(method = "getEnchantmentList", at = @At("RETURN"), cancellable = true, require = 0)
         private void enchantworks_enchant$filterDisabledEnchantmentResults(
+                //? if >=1.21
+                /*net.minecraft.core.RegistryAccess registries,*/
                 ItemStack stack,
                 int slot,
                 int power,
@@ -150,6 +160,25 @@ public class AnvilEnchantmentCoreMixin {
 
     @Mixin(value = Enchantment.class, priority = 2000)
     public abstract static class EnchantmentFix {
+        // Since 1.21 the anvil and the enchanting table both ask isSupportedItem (through NeoForge's
+        // supportsEnchantment and isPrimaryItemFor), and trading and discovery are enchantment tags.
+        //? if >=1.21 {
+        /*@Inject(method = "isSupportedItem", at = @At("HEAD"), cancellable = true, require = 0)
+        private void enchantworks_enchant$interceptSupportedItem(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
+            Enchantment self = (Enchantment) (Object) this;
+            if (AnvilEnchantmentConfig.isEnchantmentDisabled(self)) {
+                cir.setReturnValue(false);
+                return;
+            }
+            if (AnvilEnchantmentConfig.isExplicitlyDenied(stack, self)) {
+                cir.setReturnValue(false);
+                return;
+            }
+            if (AnvilEnchantmentConfig.isExplicitlyAllowed(stack, self)) {
+                cir.setReturnValue(true);
+            }
+        }
+        *///?} else {
         @Inject(method = "canEnchant", at = @At("HEAD"), cancellable = true, require = 0)
         private void enchantworks_enchant$interceptCanEnchant(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
             Enchantment self = (Enchantment) (Object) this;
@@ -195,6 +224,7 @@ public class AnvilEnchantmentCoreMixin {
                 cir.setReturnValue(false);
             }
         }
+        //?}
     }
 
     @Mixin(value = ItemStack.class, priority = 2000)
@@ -222,6 +252,37 @@ public class AnvilEnchantmentCoreMixin {
 
     @Mixin(value = EnchantmentHelper.class, priority = 2000)
     public static class EnchantmentHelperFix {
+        //? if >=1.21 {
+        /*@Inject(method = "getAvailableEnchantmentResults", at = @At("RETURN"), require = 0)
+        private static void enchantworks_enchant$addCustomEnchantments(int power, ItemStack stack,
+                java.util.stream.Stream<net.minecraft.core.Holder<Enchantment>> pool, CallbackInfoReturnable<List<EnchantmentInstance>> cir) {
+            if (stack.isEmpty()) return;
+            List<EnchantmentInstance> list = cir.getReturnValue();
+
+            list.removeIf(instance -> AnvilEnchantmentConfig.isEnchantmentDisabled(instance.enchantment) || AnvilEnchantmentConfig.isExplicitlyDenied(stack, instance.enchantment));
+
+            // Whitelisted enchantments are offered too; the table never offers curses or treasure.
+            EnchantmentInit.allHolders().forEach(enchantment -> {
+                if (AnvilEnchantmentConfig.isEnchantmentDisabled(enchantment)) return;
+                if (enchantment.is(net.minecraft.tags.EnchantmentTags.CURSE) || enchantment.is(net.minecraft.tags.EnchantmentTags.TREASURE)) return;
+                if (AnvilEnchantmentConfig.isExplicitlyAllowed(stack, enchantment)) {
+                    enchantworks_enchant$addSafeEntry(list, power, enchantment);
+                }
+            });
+        }
+
+        @Unique
+        private static void enchantworks_enchant$addSafeEntry(List<EnchantmentInstance> list, int power, net.minecraft.core.Holder<Enchantment> holder) {
+            for (EnchantmentInstance instance : list) if (instance.enchantment.equals(holder)) return;
+            Enchantment enchantment = holder.value();
+            for (int level = enchantment.getMaxLevel(); level >= enchantment.getMinLevel(); level--) {
+                if (enchantment.getMinCost(level) <= power && power <= enchantment.getMaxCost(level)) {
+                    list.add(new EnchantmentInstance(holder, level));
+                    break;
+                }
+            }
+        }
+        *///?} else {
         @Inject(method = "getAvailableEnchantmentResults", at = @At("RETURN"), require = 0)
         private static void enchantworks_enchant$addCustomEnchantments(int power, ItemStack stack, boolean allowTreasure, CallbackInfoReturnable<List<EnchantmentInstance>> cir) {
             if (stack.isEmpty()) return;
@@ -248,6 +309,7 @@ public class AnvilEnchantmentCoreMixin {
                 }
             }
         }
+        //?}
     }
 }
 

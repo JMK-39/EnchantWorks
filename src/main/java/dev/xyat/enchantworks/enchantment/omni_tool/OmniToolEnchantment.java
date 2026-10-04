@@ -1,3 +1,5 @@
+// 1.21 made enchantments data-driven: data/enchantworks/enchantment/<id>.json defines them there.
+//? if <1.21 {
 package dev.xyat.enchantworks.enchantment.omni_tool;
 
 import net.minecraft.world.entity.EquipmentSlot;
@@ -60,3 +62,4 @@ public class OmniToolEnchantment extends Enchantment {
         return this.category.canEnchant(item);
     }
 }
+//?}

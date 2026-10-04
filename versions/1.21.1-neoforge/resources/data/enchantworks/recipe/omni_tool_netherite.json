@@ -1,0 +1,10 @@
+{
+  "type": "enchantworks:omni_tool_crafting",
+  "ingredients": [
+    { "item": "minecraft:netherite_pickaxe" },
+    { "item": "minecraft:netherite_axe" },
+    { "item": "minecraft:netherite_shovel" },
+    { "item": "minecraft:shears" },
+    { "item": "minecraft:book" }
+  ]
+}

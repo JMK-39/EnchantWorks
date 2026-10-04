@@ -131,7 +131,41 @@ public class SmelterEventHandler {
         if (!AnvilEnchantmentConfig.smelterSmeltsChests || depth >= MAX_CONTAINER_DEPTH) {
             return SmeltResult.unchanged(stack);
         }
+        return processContainer(level, stack, depth);
+    }
 
+    // Items inside a container item (such as a shulker box) are smelted in place, keeping their slots.
+    //? if >=1.21 {
+    /*private static SmeltResult processContainer(Level level, ItemStack stack, int depth) {
+        net.minecraft.world.item.component.ItemContainerContents contents =
+                stack.get(net.minecraft.core.component.DataComponents.CONTAINER);
+        if (contents == null) {
+            return SmeltResult.unchanged(stack);
+        }
+
+        java.util.List<ItemStack> items = new java.util.ArrayList<>(contents.getSlots());
+        boolean changed = false;
+        double experience = 0.0D;
+        for (int i = 0; i < contents.getSlots(); i++) {
+            ItemStack contained = contents.getStackInSlot(i);
+            SmeltResult containedResult = process(level, contained, depth + 1);
+            items.add(containedResult.changed() ? containedResult.stack() : contained.copy());
+            if (containedResult.changed()) {
+                changed = true;
+                experience += containedResult.experience();
+            }
+        }
+        if (!changed) {
+            return SmeltResult.unchanged(stack);
+        }
+
+        ItemStack resultStack = stack.copy();
+        resultStack.set(net.minecraft.core.component.DataComponents.CONTAINER,
+                net.minecraft.world.item.component.ItemContainerContents.fromItems(items));
+        return new SmeltResult(resultStack, experience, true);
+    }
+    *///?} else {
+    private static SmeltResult processContainer(Level level, ItemStack stack, int depth) {
         CompoundTag originalTag = stack.getTag();
         if (originalTag == null || !originalTag.contains("BlockEntityTag", Tag.TAG_COMPOUND)) {
             return SmeltResult.unchanged(stack);
@@ -172,8 +206,17 @@ public class SmelterEventHandler {
 
         return changed ? new SmeltResult(resultStack, experience, true) : SmeltResult.unchanged(stack);
     }
+    //?}
 
     private static SmeltResult processSingle(Level level, ItemStack stack) {
+        //? if >=1.21 {
+        /*var recipeOptional = level.getRecipeManager().getRecipeFor(RecipeType.SMELTING,
+                new net.minecraft.world.item.crafting.SingleRecipeInput(stack), level);
+        if (recipeOptional.isEmpty()) {
+            return SmeltResult.unchanged(stack);
+        }
+        var recipe = recipeOptional.get().value();
+        *///?} else {
         SimpleContainer container = new SimpleContainer(stack);
         var recipeOptional = level.getRecipeManager().getRecipeFor(RecipeType.SMELTING, container, level);
         if (recipeOptional.isEmpty()) {
@@ -181,6 +224,7 @@ public class SmelterEventHandler {
         }
 
         var recipe = recipeOptional.get();
+        //?}
         ItemStack result = recipe.getResultItem(level.registryAccess()).copy();
         if (result.isEmpty()) {
             return SmeltResult.unchanged(stack);

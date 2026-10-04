@@ -1,3 +1,5 @@
+// 1.21 made enchantments data-driven: data/enchantworks/enchantment/<id>.json defines them there.
+//? if <1.21 {
 package dev.xyat.enchantworks.enchantment.enlightenment;
 
 import net.minecraft.world.entity.EquipmentSlot;
@@ -24,3 +26,4 @@ public class EnlightenmentEnchantment extends Enchantment {
         return level * 12 + 26;
     }
 }
+//?}
