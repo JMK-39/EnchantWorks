@@ -36,6 +36,8 @@ public final class AnvilEnchantmentConfigGui {
         return KTConfigPage.builder(SERVER_PAGE_ID, KineticI18n.translatable("cfg.enchantworks.server.title"))
                 .scope(KTConfigScope.SERVER_AUTHORITATIVE)
                 .serverManaged()
+                // Tooltips use these values on the client (for example disabled enchantments), so load them from the server.
+                .mirrorOnJoin()
                 .applyTiming(KTConfigPage.ApplyTiming.MIXED)
                 .applyNotice(KineticI18n.translatable("cfg.enchantworks.server.apply_notice"))
                 .pageDescription(KineticI18n.translatable("cfg.enchantworks.server.description"))

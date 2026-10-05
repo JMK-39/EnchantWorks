@@ -1,3 +1,13 @@
+2026年10月06日 07时18分 — 26.10.6
+
+- Enchantment tooltips follow the server's settings: when you join a server, its Enchant Works settings (such as disabled enchantments) are loaded once for you, so tooltips no longer depend on your own local config file. Nothing is sent to other players when an admin edits the settings; they see the change when they next join.
+- Requires KineticCore 26.10.6+.
+
+- 附魔提示遵循服务器的设置：加入服务器时会为你加载一次附魔工坊的服务器设置（例如禁用的附魔），提示不再依赖你自己的本地配置文件。管理员修改设置时不会向其他玩家发送任何内容，他们会在下次加入时看到变更。
+- 需要 KineticCore 26.10.6+。
+
+---
+
 2026年10月04日 14时42分 — 26.10.4
 
 - Added NeoForge 1.21.1 and NeoForge 26.1.2 support next to Forge 1.20.1 (Java 21; Java 25 on 26.1.2; KineticCore 26.10.3+). JARs are named enchantworks-<loader>-<minecraft>-<version>.jar.

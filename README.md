@@ -16,7 +16,7 @@ Enchant Works combines configurable anvil rules with five custom enchantments an
 | 1.21.1 | NeoForge 21.1+ (validated with 21.1.252) | 21 |
 | 26.1.2 | NeoForge 26.1.2+ (validated with 26.1.2.112) | 25 |
 
-Requires **KineticCore 26.10.3+** built for the same Minecraft version and loader. Install Enchant Works and KineticCore on both client and server. Since 1.21 the five enchantments are data-driven, so datapacks can adjust them like vanilla enchantments.
+Requires **KineticCore 26.10.6+** built for the same Minecraft version and loader. Install Enchant Works and KineticCore on both client and server. Since 1.21 the five enchantments are data-driven, so datapacks can adjust them like vanilla enchantments.
 
 ### Anvil and experience rules
 
@@ -97,7 +97,7 @@ Enchant Works（附魔工坊）整合铁砧规则、五种自定义附魔和部�
 | 1.21.1 | NeoForge 21.1+（验证使用 21.1.252） | 21 |
 | 26.1.2 | NeoForge 26.1.2+（验证使用 26.1.2.112） | 25 |
 
-需要与 Minecraft 版本、加载器对应的 **KineticCore 26.10.3+**。客户端和服务端均应安装附魔工坊与 KineticCore。1.21 起五种附魔改为数据驱动，可像原版附魔一样用数据包调整。
+需要与 Minecraft 版本、加载器对应的 **KineticCore 26.10.6+**。客户端和服务端均应安装附魔工坊与 KineticCore。1.21 起五种附魔改为数据驱动，可像原版附魔一样用数据包调整。
 
 ### 铁砧与经验规则
 
