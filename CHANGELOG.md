@@ -1,3 +1,11 @@
+2026年10月08日 — Bilingual guide / 双语使用指南
+
+- Detailed configuration, enchantment and multiplayer instructions are now available in separate English and Chinese Wiki guides. The project overview focuses on features and requirements.
+
+- 详细配置、附魔和多人游戏说明已整理为独立的中英文 Wiki 教程，项目首页聚焦功能介绍与运行环境。
+
+---
+
 2026年10月06日 07时18分 — 26.10.6
 
 - Enchantment tooltips follow the server's settings: when you join a server, its Enchant Works settings (such as disabled enchantments) are loaded once for you, so tooltips no longer depend on your own local config file. Nothing is sent to other players when an admin edits the settings; they see the change when they next join.

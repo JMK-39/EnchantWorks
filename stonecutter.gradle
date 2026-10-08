@@ -145,6 +145,9 @@ stonecutter.parameters {
         call 'net.minecraft.world.item.EnchantedBookItem.createForEnchantment(', 'net.minecraft.world.item.enchantment.EnchantmentHelper.createBook('
         call 'context.getParamOrNull(', 'context.getOptionalParameter('
         call 'method = "renderLabels"', 'method = "extractLabels"'
+        // The opt-in GUI fixture uses the 26.1 resize and asynchronous screenshot APIs.
+        call 'mc.resizeDisplay()', 'mc.resizeGui()'
+        call 'try(var image=Screenshot.takeScreenshot(mc.getMainRenderTarget())){image.writeToFile(path);}', 'Screenshot.takeScreenshot(mc.getMainRenderTarget(),image->{try(image){image.writeToFile(path);}catch(java.io.IOException error){throw new java.io.UncheckedIOException(error);}});'
         spec.replace '\\binstance\\.enchantment\\b(?!\\()', 'instance.enchantment()', '\\binstance\\.enchantment\\(\\)', 'instance.enchantment'
     }
 }

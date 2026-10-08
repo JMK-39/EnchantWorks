@@ -24,6 +24,9 @@ import java.util.List;
 @Mod("enchantworks_validation")
 public final class RuntimeValidation {
     public RuntimeValidation() {
+        if (Boolean.getBoolean("enchantworks.guiValidation")) {
+            dev.xyat.kineticcore.api.runtime.KineticPlatform.runOnClient(() -> GuiCaptureValidation::install);
+        }
         MinecraftForge.EVENT_BUS.addListener((ServerStartedEvent event) -> validate(event.getServer()));
     }
 
