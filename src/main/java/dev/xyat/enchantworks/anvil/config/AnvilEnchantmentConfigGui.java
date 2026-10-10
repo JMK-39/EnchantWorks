@@ -51,7 +51,6 @@ public final class AnvilEnchantmentConfigGui {
                         () -> AnvilEnchantmentConfig.anvilLimitWhitelistMode,
                         value -> AnvilEnchantmentConfig.anvilLimitWhitelistMode = value, false,
                         KineticI18n.translatable("cfg.enchantworks.anvil.whitelist_mode.tooltip"))
-                .description(KineticI18n.translatable("cfg.enchantworks.anvil.item_list.syntax"))
                 .itemRuleList("anvil_item_list", KineticI18n.translatable("cfg.enchantworks.anvil.item_list"),
                         () -> new ArrayList<>(AnvilEnchantmentConfig.anvilLimitList),
                         value -> AnvilEnchantmentConfig.anvilLimitList = new ArrayList<>(value), DEFAULT_ANVIL_ITEMS,
@@ -76,7 +75,6 @@ public final class AnvilEnchantmentConfigGui {
                         () -> AnvilEnchantmentConfig.enableBetterChanneling,
                         value -> AnvilEnchantmentConfig.enableBetterChanneling = value, true,
                         KineticI18n.translatable("cfg.enchantworks.enchantment.better_channeling.tooltip"))
-                .description(KineticI18n.translatable("cfg.enchantworks.enchantment.rules.syntax"))
                 .stringList("enchantment_whitelist", KineticI18n.translatable("cfg.enchantworks.enchantment.whitelist"),
                         () -> new ArrayList<>(AnvilEnchantmentConfig.whitelist),
                         value -> AnvilEnchantmentConfig.whitelist = new ArrayList<>(value), DEFAULT_WHITELIST,
@@ -127,7 +125,6 @@ public final class AnvilEnchantmentConfigGui {
                         () -> AnvilEnchantmentConfig.smelterExpMultiplier,
                         value -> AnvilEnchantmentConfig.smelterExpMultiplier = value, 1.0,
                         KineticI18n.translatable("cfg.enchantworks.values.smelter_exp.tooltip"))
-                .description(KineticI18n.translatable("cfg.enchantworks.values.smelter_multipliers.syntax"))
                 .stringList("smelter_multipliers", KineticI18n.translatable("cfg.enchantworks.values.smelter_multipliers"),
                         () -> new ArrayList<>(AnvilEnchantmentConfig.smelterMultiplierList),
                         value -> AnvilEnchantmentConfig.smelterMultiplierList = new ArrayList<>(value), DEFAULT_SMELTER_MULTIPLIERS,
@@ -164,7 +161,6 @@ public final class AnvilEnchantmentConfigGui {
                         () -> AnvilEnchantmentConfig.omniToolEnchantChance,
                         value -> AnvilEnchantmentConfig.omniToolEnchantChance = value, 0.10, 0.0, 1.0,
                         KineticI18n.translatable("cfg.enchantworks.values.omni_chance.tooltip"))
-                .description(KineticI18n.translatable("cfg.enchantworks.values.force_drop.syntax"))
                 .stringList("omni_force_drop", KineticI18n.translatable("cfg.enchantworks.values.force_drop"),
                         () -> new ArrayList<>(AnvilEnchantmentConfig.omniToolForceDropBlocks),
                         value -> AnvilEnchantmentConfig.omniToolForceDropBlocks = new ArrayList<>(value), List.of(),
@@ -173,6 +169,11 @@ public final class AnvilEnchantmentConfigGui {
                         () -> AnvilEnchantmentConfig.enlightenmentExpMult,
                         value -> AnvilEnchantmentConfig.enlightenmentExpMult = value, 0.125,
                         KineticI18n.translatable("cfg.enchantworks.values.enlightenment.tooltip"))
+                .listEditor("enchantment_whitelist", VisualRuleEditors::enchantments)
+                .listEditor("enchantment_blacklist", VisualRuleEditors::enchantments)
+                .listEditor("disabled_enchantments", VisualRuleEditors::disabled)
+                .listEditor("smelter_multipliers", VisualRuleEditors::smelter)
+                .listEditor("omni_force_drop", VisualRuleEditors::blocks)
                 .build();
     }
 

@@ -17,7 +17,7 @@ Enchant Works combines configurable anvil rules, enchantment filters, five custo
 | 1.21.1 | NeoForge 21.1+ | 21 |
 | 26.1.2 | NeoForge 26.1.2+ | 25 |
 
-Install on both client and server with matching KineticCore: **26.10.7+ on Forge 1.20.1, 26.10.6+ on NeoForge**. Enchantments are data-driven from 1.21 onward.
+Install on both client and server with matching KineticCore: **26.10.10.1+ on every supported version**. Enchantments are data-driven from 1.21 onward.
 
 [Detailed tutorial](https://github.com/JMK-39/EnchantWorks/wiki/Tutorial) · [Changelog](CHANGELOG.md)
 
@@ -38,6 +38,6 @@ Install on both client and server with matching KineticCore: **26.10.7+ on Forge
 | 1.21.1 | NeoForge 21.1+ | 21 |
 | 26.1.2 | NeoForge 26.1.2+ | 25 |
 
-客户端与服务端均需安装，并使用对应版本的 KineticCore：**Forge 1.20.1 为 26.10.7+，NeoForge 为 26.10.6+**。1.21 起附魔采用数据驱动。
+客户端与服务端均需安装，并使用对应版本的 KineticCore：**所有支持版本均为 26.10.10.1+**。1.21 起附魔采用数据驱动。
 
 [详细使用教程](https://github.com/JMK-39/EnchantWorks/wiki/使用教程) · [更新日志](CHANGELOG.md)

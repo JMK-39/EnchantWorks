@@ -210,6 +210,15 @@ tasks.named('test', Test).configure {
     failOnNoDiscoveredTests = false
 }
 
+tasks.register('checkVisualRuleDraft', JavaExec) {
+    group = 'verification'
+    dependsOn 'testClasses'
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass.set('dev.xyat.enchantworks.anvil.config.VisualRuleDraftRegression')
+    javaLauncher.set(javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(pToolchain) })
+}
+tasks.named('check').configure { dependsOn 'checkVisualRuleDraft' }
+
 configurations {
     kineticMixinCheck
 }
@@ -276,3 +285,4 @@ if (pLoader == 'neoforge') {
 
 // English and Chinese must expose exactly the same authored translation keys.
 apply from: rootProject.file('gradle/kinetic-language-validation.gradle')
+apply from: rootProject.file('gradle/kinetic-gui-validation.gradle')

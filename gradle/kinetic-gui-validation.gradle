@@ -1,0 +1,31 @@
+// Optional fixture for validating the GUI inside an installed Forge client; never shipped in release JARs.
+if (project.property('loader') == 'forge') {
+    def metadata = layout.buildDirectory.dir('gui-capture-validation')
+    def writeMetadata = tasks.register('writeGuiCaptureValidationMetadata') {
+        outputs.dir metadata
+        doLast {
+            File target = new File(metadata.get().asFile, 'META-INF/mods.toml')
+            target.parentFile.mkdirs()
+            target.setText('modLoader="javafml"\nloaderVersion="[1,)"\nlicense="LGPLv3"\n[[mods]]\nmodId="enchantworks_validation"\nversion="1.0.0"\ndisplayName="EnchantWorks GUI capture"\n', 'UTF-8')
+            new File(metadata.get().asFile, 'pack.mcmeta').setText('{"pack":{"description":"Opt-in GUI capture fixture","pack_format":15}}', 'UTF-8')
+        }
+    }
+    def captureJar = tasks.register('guiCaptureValidationJar', Jar) {
+        dependsOn 'testClasses', writeMetadata
+        from(sourceSets.test.output) { include 'dev/xyat/enchantworksvalidation/GuiCapture*.class' }
+        from metadata
+        archiveFileName = 'enchantworks-gui-capture.jar'
+    }
+    afterEvaluate {
+        def shipped = tasks.named('reobfJar').get()
+        tasks.register('reobfGuiCaptureValidationJar', shipped.getClass().superclass) {
+            dependsOn captureJar
+            input.set(captureJar.flatMap { it.archiveFile })
+            libraries.from(shipped.libraries, sourceSets.main.output)
+            remapOperation.toolType.set(shipped.remapOperation.toolType)
+            remapOperation.toolClasspath.from(shipped.remapOperation.toolClasspath)
+            remapOperation.mappings.from(shipped.remapOperation.mappings)
+            archiveFileName = 'enchantworks-gui-capture-reobf.jar'
+        }
+    }
+}
