@@ -35,6 +35,7 @@ public final class GuiCaptureValidation {
             var mc=Minecraft.getInstance();
             if(!started) {
                 if(mc.player==null || mc.level==null || mc.getSingleplayerServer()==null)return;
+                checkToastProgress();
                 started=true;originalLanguage=mc.getLanguageManager().getSelected();originalScale=mc.options.guiScale().get();
                 originalWidth=mc.getWindow().getWidth();originalHeight=mc.getWindow().getHeight();originalFullscreen=mc.getWindow().isFullscreen();
                 mc.options.guiScale().set(0);
@@ -87,6 +88,29 @@ public final class GuiCaptureValidation {
             failures++;LOG.error("ENCHANTWORKS_GUI_FAIL phase="+phase+" page="+page,error);
             try { nextPage(); } catch(Throwable next) { finish(); }
         }
+    }
+    private static void checkToastProgress() throws ReflectiveOperationException {
+        var runtime=Class.forName("dev.xyat.kineticcore.internal.client.overlay.GuiOverlayRuntime");
+        var field=runtime.getDeclaredField("ACTIVE_TOASTS");field.setAccessible(true);
+        @SuppressWarnings("unchecked") var toasts=(List<Object>)field.get(null);
+        String id="core-progress-validation";
+        var overlays=dev.xyat.kineticcore.api.client.gui.overlay.KineticOverlays.Position.BOTTOM_CENTER;
+        dev.xyat.kineticcore.api.client.gui.overlay.KineticOverlays.toast(id,Component.literal("0%"),overlays,10000,0,-30);
+        Object original=toasts.get(toasts.size()-1);
+        var start=original.getClass().getDeclaredField("startTime");start.setAccessible(true);
+        var message=original.getClass().getDeclaredField("message");message.setAccessible(true);
+        var position=original.getClass().getDeclaredField("currentY");position.setAccessible(true);position.setFloat(original,180f);
+        long initial=start.getLong(original);int count=toasts.size();
+        for(int progress:new int[]{12,34,78,99}) {
+            dev.xyat.kineticcore.api.client.gui.overlay.KineticOverlays.toast(id,Component.literal(progress+"%"),overlays,10000,0,-30);
+            if(toasts.size()!=count||toasts.get(count-1)!=original||start.getLong(original)!=initial||position.getFloat(original)!=180f
+                    ||!((Component)message.get(original)).getString().equals(progress+"%"))throw new AssertionError("progress toast replaced or animation restarted");
+        }
+        dev.xyat.kineticcore.api.client.gui.overlay.KineticOverlays.toast(id,Component.literal("Search index built"),overlays,2500,0,-30);
+        if(toasts.get(count-1)!=original||((Component)message.get(original)).getString().contains("%"))throw new AssertionError("completion did not replace progress in the same message");
+        dev.xyat.kineticcore.api.client.gui.overlay.KineticOverlays.removeToast(id);
+        if(toasts.contains(original))throw new AssertionError("progress toast removal failed");
+        LOG.info("CORE_PROGRESS_TOAST_PASS singleMessage=true animationPreserved=true percentages=0,12,34,78,99 completionWithoutPercentage=true");
     }
     private static String currentPage() {
         if(page>=3 && page<=10) {

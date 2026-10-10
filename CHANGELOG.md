@@ -2,10 +2,12 @@
 
 - Choose Omni Tool forced-drop blocks, anvil item filters, Smelter output multipliers, and enchantment allowlists, denylists and global exclusions through visual selectors. Item, tag and mod targets no longer require typed rule syntax.
 - Enchantment selections support multiple choices, search and individual removal of disabled or unregistered entries. Apply changes to the parent draft, then save the configuration; cancelling preserves existing rules.
+- Place the visual editors' Cancel buttons at the upper left for consistent return navigation.
 - Requires KineticCore 26.10.10.1 or later.
 
 - 万能工具强制掉落、铁砧物品过滤、熔炼产出倍率、附魔白名单、黑名单和全局禁用改为可视化选择物品、标签、模组及附魔，无需手填规则语法。
 - 附魔列表支持多选、搜索，并可单独移除已禁用或未注册的条目；应用后返回配置页保存，取消时保留原规则。
+- 可视化编辑页的取消返回按钮统一放在左上角，方便按相同位置返回上级。
 - 需要 KineticCore 26.10.10.1 或更新版本。
 
 ---

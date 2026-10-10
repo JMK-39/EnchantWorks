@@ -88,7 +88,7 @@ public final class VisualRuleEditors {
             ui.button(200, 316, 88).text(tr("remove")).onClick(() -> {
                 if (selected >= 0 && selected < rules.size()) { offset = list.scrollOffset(); rules.remove(selected); selected = -1; rebuild(); }
             }).build();
-            ui.button(436, 316, 88).text(tr("cancel")).onClick(this::close).build();
+            ui.button(16, 16, 88).text(tr("cancel")).onClick(this::close).build();
             ui.button(528, 316, 96).text(tr("apply")).onClick(() -> { apply.accept(List.copyOf(rules)); close(); }).build();
         }
         void edit(int index) {
@@ -102,7 +102,7 @@ public final class VisualRuleEditors {
         }
         @Override protected void renderBackground(KineticGraphics g, int x, int y, float pt) {
             KineticTheme.panel(g, 12, 12, 616, 332);
-            g.scrollingTextCentered(title(), 320, 24, 592, 0xFFFFAA00, false);
+            g.scrollingTextCentered(title(), 320, 24, 424, 0xFFFFAA00, false);
         }
     }
 
@@ -142,7 +142,7 @@ public final class VisualRuleEditors {
                         .tooltip(tr("enchantments_hint")).onClick(() -> openChild(new EnchantmentPicker(tr("enchantments"), enchantments,
                                 result -> { enchantments = new ArrayList<>(result); rebuild(); }))).build();
             }
-            ui.button(420, 316, 88).text(tr("cancel")).onClick(this::close).build();
+            ui.button(16, 16, 88).text(tr("cancel")).onClick(this::close).build();
             ui.button(512, 316, 100).text(tr("apply")).onClick(() -> {
                 if (targets.isEmpty() || (kind == Kind.ENCHANTMENTS && !all && enchantments.isEmpty())) return;
                 int number;
@@ -154,7 +154,7 @@ public final class VisualRuleEditors {
         }
         @Override protected void renderBackground(KineticGraphics g, int x, int y, float pt) {
             KineticTheme.panel(g, 12, 12, 616, 332);
-            g.scrollingTextCentered(title(), 320, 24, 592, 0xFFFFAA00, false);
+            g.scrollingTextCentered(title(), 320, 24, 424, 0xFFFFAA00, false);
             g.scrollingText(Component.literal(String.join(", ", targets.stream().map(VisualRuleEditors::targetName).toList())),
                     218, 64, 394, 0xFFFFFFFF, false);
             if (kind == Kind.SMELTER) g.scrollingText(tr("multiplier"), 28, 130, 152, 0xFFFFFFFF, false);
@@ -191,13 +191,13 @@ public final class VisualRuleEditors {
             ui.textField(16, 44, 608).value(query).tooltip(tr("search_hint")).onChange(value -> { query = value; filter(); }).build();
             ui.add(viewport); filter();
             ui.button(16, 316, 88).text(tr("clear")).onClick(selected::clear).build();
-            ui.button(436, 316, 88).text(tr("cancel")).onClick(this::close).build();
+            ui.button(16, 16, 88).text(tr("cancel")).onClick(this::close).build();
             ui.button(528, 316, 96).text(tr("apply")).onClick(() -> { apply.accept(List.copyOf(selected)); close(); }).build();
         }
         void filter() { viewport.setChoices(choices.stream().filter(s -> KineticSearch.match(s.value() + " " + s.translation().getString(), query)).toList()); }
         @Override protected void renderBackground(KineticGraphics g, int x, int y, float pt) {
             KineticTheme.panel(g, 12, 12, 616, 332);
-            g.scrollingTextCentered(title(), 320, 24, 592, 0xFFFFAA00, false);
+            g.scrollingTextCentered(title(), 320, 24, 424, 0xFFFFAA00, false);
         }
     }
 
@@ -220,7 +220,7 @@ public final class VisualRuleEditors {
             viewport = new ChoiceViewport(16, 96, 608, 212, Set.of(), value -> { accept.accept(value); close(); });
             ui.textField(16, 70, 608).value(query).tooltip(tr("search_hint")).onChange(value -> { query = value; filter(); }).build();
             ui.add(viewport); filter();
-            ui.button(528, 316, 96).text(tr("cancel")).onClick(this::close).build();
+            ui.button(16, 16, 88).text(tr("cancel")).onClick(this::close).build();
         }
         void filter() {
             var ids = mode == 0 ? KineticRegistries.blocks().tagIds().stream()
@@ -235,7 +235,7 @@ public final class VisualRuleEditors {
         }
         @Override protected void renderBackground(KineticGraphics g, int x, int y, float pt) {
             KineticTheme.panel(g, 12, 12, 616, 332);
-            g.scrollingTextCentered(title(), 320, 24, 592, 0xFFFFAA00, false);
+            g.scrollingTextCentered(title(), 320, 24, 424, 0xFFFFAA00, false);
         }
     }
 
