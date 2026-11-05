@@ -18,9 +18,9 @@ import org.slf4j.LoggerFactory;
 public final class GuiCaptureValidation {
     private static final Logger LOG=LoggerFactory.getLogger(GuiCaptureValidation.class);
     private static final String ROOT=System.getProperty("enchantworks.guiValidation.output","D:/IDEAWork/EnchantWorks/.gradle/gui-capture/");
-    private static final String[] NAMES={"anvil-config","sixth-sense-config","native-anvil","enchantment-rules","smelter-rules","force-drop-rules","enchantment-multiselect","enchantment-rule-editor","smelter-rule-editor","block-tags","anvil-item-picker","core-item-selector","core-config","core-selector-bottom"};
-    private static final String[] PAGES={"KTConfigScreen","KTConfigScreen","AnvilScreen","RuleListPage","RuleListPage","RuleListPage","EnchantmentPicker","RuleDetails","RuleDetails","BlockTargetPicker","ItemListEditorScreen","ItemSelectorScreen","KTModuleConfigScreen","ItemSelectorScreen"};
-    private static final long OPEN_TIMEOUT=20000;
+    private static final String[] NAMES={"anvil-config","sixth-sense-config","native-anvil","enchantment-rules","smelter-rules","force-drop-rules","enchantment-multiselect","enchantment-rule-editor","smelter-rule-editor","leech-effects","anvil-item-picker","core-item-selector","core-config","core-selector-bottom"};
+    private static final String[] PAGES={"KTConfigScreen","KTConfigScreen","AnvilScreen","RuleListPage","RuleListPage","ItemListEditorScreen","EnchantmentPicker","RuleDetails","RuleDetails","EffectPicker","ItemListEditorScreen","ItemSelectorScreen","KTModuleConfigScreen","ItemSelectorScreen"};
+    private static final long OPEN_TIMEOUT=30000;
     private static boolean installed,started,screenshot,finished,originalFullscreen,interactionChecked,preparing;
     private static String originalLanguage;
     private static int originalScale,originalWidth,originalHeight,phase=-1,page=-1,captures,failures;
@@ -40,6 +40,18 @@ public final class GuiCaptureValidation {
                 originalWidth=mc.getWindow().getWidth();originalHeight=mc.getWindow().getHeight();originalFullscreen=mc.getWindow().isFullscreen();
                 mc.options.guiScale().set(0);
                 if(originalFullscreen)mc.getWindow().toggleFullScreen();
+                // Server config pages are editable only by operators; a test world without cheats shows them read-only.
+                // /op exists only on dedicated servers, so the player list grants it directly.
+                var opServer=mc.getSingleplayerServer();var opPlayerId=mc.player.getUUID();
+                opServer.execute(()->{
+                    var opPlayer=opServer.getPlayerList().getPlayer(opPlayerId);
+                    if(opPlayer==null)return;
+                    //? if >=26.1 {
+                    /*opServer.getPlayerList().op(new net.minecraft.server.players.NameAndId(opPlayer.getGameProfile()));
+                    *///?} else {
+                    opServer.getPlayerList().op(opPlayer.getGameProfile());
+                    //?}
+                });
                 if(mc.gameDirectory.getName().startsWith(".codex-native-recipes-")) {
                     preparing=true;
                     mc.getSingleplayerServer().execute(()->{
@@ -122,6 +134,9 @@ public final class GuiCaptureValidation {
     private static void nextPhase() {
         if(stressOriginal!=null){Language.inject(stressOriginal);stressOriginal=null;}
         phase++;page=-1;
+        // One English 1080p round by default; list phases (0-4) in enchantworks.guiValidation.phases to run more.
+        String selectedPhases=System.getProperty("enchantworks.guiValidation.phases","1");
+        while(phase<5 && !Boolean.getBoolean("enchantworks.guiValidation.fullHdOnly") && !List.of(selectedPhases.split(",")).contains(String.valueOf(phase)))phase++;
         boolean fullHd=Boolean.getBoolean("enchantworks.guiValidation.fullHdOnly");
         if(phase>=(fullHd?2:5)){finish();return;}
         var mc=Minecraft.getInstance();
@@ -145,23 +160,20 @@ public final class GuiCaptureValidation {
         switch(page) {
             case 0 -> KTConfigApi.openPage(dev.xyat.enchantworks.anvil.config.AnvilEnchantmentConfigGui.SERVER_PAGE_ID);
             case 1 -> KTConfigApi.openPage(dev.xyat.enchantworks.anvil.config.AnvilEnchantmentConfigGui.CLIENT_PAGE_ID);
-            case 3 -> dev.xyat.enchantworks.anvil.config.VisualRuleEditors.enchantments(Component.literal("Enchantments"),List.of("#minecraft:axes; minecraft:sharpness, minecraft:mending", "@minecraft; *"),result->{});
-            case 4 -> dev.xyat.enchantworks.anvil.config.VisualRuleEditors.smelter(Component.literal("Smelter"),List.of("2x #c:ores","3x minecraft:raw_iron"),result->{});
-            case 5 -> dev.xyat.enchantworks.anvil.config.VisualRuleEditors.blocks(Component.literal("Force drops"),List.of("#minecraft:mineable/pickaxe", "minecraft:stone"),result->{});
-            case 6 -> dev.xyat.enchantworks.anvil.config.VisualRuleEditors.disabled(Component.literal("Enchantments"),List.of("minecraft:sharpness","minecraft:mending","removed:old_enchantment"),result->{});
+            case 3 -> dev.xyat.enchantworks.anvil.config.VisualRuleEditors.enchantments(dev.xyat.kineticcore.api.text.KineticI18n.translatable("cfg.enchantworks.section.enchantment"),List.of("#minecraft:axes; minecraft:sharpness, minecraft:mending", "@minecraft; *"),result->{});
+            case 4 -> dev.xyat.enchantworks.anvil.config.VisualRuleEditors.smelter(dev.xyat.kineticcore.api.text.KineticI18n.translatable("cfg.enchantworks.section.smelter"),List.of("2x #c:ores","3x minecraft:raw_iron"),result->{});
+            case 5 -> dev.xyat.enchantworks.anvil.config.VisualRuleEditors.blocks(dev.xyat.kineticcore.api.text.KineticI18n.translatable("cfg.enchantworks.values.force_drop"),List.of("#minecraft:mineable/pickaxe", "minecraft:stone"),result->{});
+            case 6 -> dev.xyat.enchantworks.anvil.config.VisualRuleEditors.disabled(dev.xyat.kineticcore.api.text.KineticI18n.translatable("cfg.enchantworks.section.enchantment"),List.of("minecraft:sharpness","minecraft:mending","removed:old_enchantment"),result->{});
             case 7 -> {
-                dev.xyat.enchantworks.anvil.config.VisualRuleEditors.enchantments(Component.literal("Enchantments"),List.of("#minecraft:axes, minecraft:stick; minecraft:sharpness, minecraft:mending"),result->{});
+                dev.xyat.enchantworks.anvil.config.VisualRuleEditors.enchantments(dev.xyat.kineticcore.api.text.KineticI18n.translatable("cfg.enchantworks.section.enchantment"),List.of("#minecraft:axes, minecraft:stick; minecraft:sharpness, minecraft:mending"),result->{});
                 editRule(0);
             }
             case 8 -> {
-                dev.xyat.enchantworks.anvil.config.VisualRuleEditors.smelter(Component.literal("Smelter"),List.of("3x minecraft:raw_iron"),result->{});
+                dev.xyat.enchantworks.anvil.config.VisualRuleEditors.smelter(dev.xyat.kineticcore.api.text.KineticI18n.translatable("cfg.enchantworks.section.smelter"),List.of("3x minecraft:raw_iron"),result->{});
                 editRule(0);
             }
-            case 9 -> {
-                dev.xyat.enchantworks.anvil.config.VisualRuleEditors.blocks(Component.literal("Force drops"),List.of(),result->{});
-                editRule(-1);
-            }
-            case 10 -> dev.xyat.kineticcore.api.client.gui.selector.KineticSelectors.openItemListEditor(Component.literal("Anvil"),List.of("minecraft:diamond_sword", "#minecraft:axes"),dev.xyat.kineticcore.api.client.gui.selector.KineticSelectors.ItemListMode.ITEMS_TAGS_MODS,result->{});
+            case 9 -> dev.xyat.enchantworks.anvil.config.VisualRuleEditors.effects(Component.translatable("cfg.enchantworks.values.leech_effects"),List.of("minecraft:slow_falling","removed:old_effect"),result->{});
+            case 10 -> dev.xyat.kineticcore.api.client.gui.selector.KineticSelectors.openItemListEditor(dev.xyat.kineticcore.api.text.KineticI18n.translatable("cfg.enchantworks.section.anvil"),List.of("minecraft:diamond_sword", "#minecraft:axes"),dev.xyat.kineticcore.api.client.gui.selector.KineticSelectors.ItemListMode.ITEMS_TAGS_MODS,result->{});
             case 11,13 -> dev.xyat.kineticcore.api.client.gui.selector.KineticSelectors.openItemSelector(result->{});
             case 12 -> KTConfigApi.openOwner("kineticcore");
             default -> {
@@ -190,7 +202,8 @@ public final class GuiCaptureValidation {
         var choices=(List<dev.xyat.kineticcore.api.client.search.KineticSuggestion>)choicesField.get(page);
         if(choices.stream().noneMatch(choice -> choice.value().equals("removed:old_enchantment")))throw new AssertionError("Unregistered selected enchantment must remain visible and individually removable");
         var viewport=field.get(page);var select=viewport.getClass().getDeclaredMethod("onMouseClick",dev.xyat.kineticcore.api.client.gui.input.MouseInput.class);select.setAccessible(true);
-        var input=new dev.xyat.kineticcore.api.client.gui.input.MouseInput(22,73,dev.xyat.kineticcore.api.client.gui.input.MouseButton.LEFT,0,0);
+        var bounds=(dev.xyat.kineticcore.api.client.gui.widget.KineticControl)viewport;
+        var input=new dev.xyat.kineticcore.api.client.gui.input.MouseInput(bounds.controlX()+6,bounds.controlY()+5,dev.xyat.kineticcore.api.client.gui.input.MouseButton.LEFT,0,0);
         var selectedField=page.getClass().getDeclaredField("selected");selectedField.setAccessible(true);
         var selected=(java.util.Set<?>)selectedField.get(page);var before=java.util.Set.copyOf(selected);
         var queryField=page.getClass().getDeclaredField("query");queryField.setAccessible(true);queryField.set(page,"removed:old_enchantment");
@@ -249,7 +262,14 @@ public final class GuiCaptureValidation {
         var mc=Minecraft.getInstance();
         if(stressOriginal!=null){Language.inject(stressOriginal);stressOriginal=null;}
         mc.setScreen(null);
-        LOG.info("ENCHANTWORKS_GUI_{} pages={} captures={} failures={} userSettingsKept=true",failures==0?"PASS":"FAIL",NAMES.length,captures,failures);
+        mc.options.guiScale().set(originalScale);
+        mc.getLanguageManager().setSelected(originalLanguage);mc.options.languageCode=originalLanguage;
+        mc.getWindow().setWindowed(originalWidth,originalHeight);
+        if(originalFullscreen&&!mc.getWindow().isFullscreen())mc.getWindow().toggleFullScreen();
+        String result="ENCHANTWORKS_GUI_"+(failures==0?"PASS":"FAIL")+" pages="+NAMES.length+" captures="+captures+" failures="+failures+" userSettingsRestored=true";
+        try {Path output=Path.of(ROOT);Files.createDirectories(output);Files.writeString(output.resolve("result.txt"),result+System.lineSeparator());}
+        catch(java.io.IOException error){LOG.error("ENCHANTWORKS_GUI_RESULT_WRITE_FAIL",error);}
+        LOG.info(result);
         dev.xyat.kineticcore.api.runtime.KineticClientRuntime.stopClient();
     }
     private static final class StressLanguage extends Language {

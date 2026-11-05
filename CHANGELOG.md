@@ -1,3 +1,49 @@
+2026年10月26日 — 26.10.26 — Clearer editors / 更清晰的编辑界面
+- The rule editor is a form: target items show as icons with their names, the enchantment and multiplier rows follow, and the Choose buttons are as wide as their labels.
+- 规则编辑页改为表单：目标物品以图标加名称显示，其后是附魔或倍率行，“选择”按钮缩短为文字所需宽度。
+
+2026年10月24日 — 26.10.24 — Buttons at the top, standard slots / 按钮置顶与统一物品格
+- Enchantment and smelter rules are shown as what they do: the target items as icons (tags cycle their items, # and @ marks), an arrow, then the enchantments or the output multiplier. The title is centred on the screen; right-click a rule to edit or remove it.
+- 附魔与熔炼规则按实际作用展示：目标物品以图标显示（标签轮播其物品，带 # / @ 标记），箭头后是附魔或产出倍率；标题以屏幕为中心居中；右键规则可编辑或移除。
+
+2026年10月20日 — Editor canvas / 编辑画布
+
+- Rule lists, rule editors and the enchantment picker keep every action in the header row (Apply top-right); lists and pickers start right under the header and show more rows.
+- 规则列表、规则编辑与附魔选择页的所有按钮移到顶栏（应用在右上角）；列表从顶栏下方开始，显示更多行。
+- Visual rule and selection pages use a full canvas with one white outer frame, gray-white header dividers and four-pixel control margins. Selection rows keep their outlines.
+- 可视化规则与选择页使用完整画布、单层白色外框、灰白标题分隔线及四点控件边距，保留选择行边框。
+
+---
+
+2026年10月16日 — Direct effect and block selection / 状态效果与方块直接多选
+
+- Widen the Leech effect search field and support Delete for the selected enchantment/Smelter rule through the core input API. Text-field editing keeps priority.
+- 汲取效果搜索框加宽；附魔与熔炼规则列表支持通过核心输入 API 按 Delete 删除当前规则，文本框编辑优先。
+- Leech effect lists open all registered effects with icons, IDs, translated names and multi-selection. Search and action buttons sit at the top; existing unregistered effects remain individually selectable.
+- Omni Tool forced-drop rules open the shared item-search multi-selector directly, including block tags and mods. Selection uses block IDs, block tags and block namespaces, and preserves unknown existing rules.
+- 汲取效果名单直接显示全部状态效果的图标、ID 与翻译名称并支持多选，搜索和操作按钮置顶，已有未注册效果仍可单独反选。
+- 万能工具强制掉落方块直接进入核心物品搜索多选，支持方块标签与模组规则；始终按方块 ID、方块标签及方块所属模组保存，保留未知已有规则。
+
+---
+
+2026年10月15日 — Search hints / 搜索提示
+
+- The search fields of the enchantment and block pickers show a hint while empty.
+
+- 附魔与方块选择页的搜索框在为空时显示提示文字。
+
+---
+
+2026年10月13日 — Editor titles and rows / 编辑页标题与行距
+
+- Visual rule editor titles line up with their Cancel buttons.
+- The enchantment and Smelter rule editors list targets, mode, enchantments and multiplier in evenly spaced rows below the title, without empty gaps.
+
+- 可视化规则编辑页的标题与取消按钮对齐。
+- 附魔与熔炼规则编辑页的目标、模式、附魔与倍率按统一行距排列在标题下方，不再留出空白。
+
+---
+
 2026年10月10日 — Visual rule editing / 可视化规则编辑
 
 - Choose Omni Tool forced-drop blocks, anvil item filters, Smelter output multipliers, and enchantment allowlists, denylists and global exclusions through visual selectors. Item, tag and mod targets no longer require typed rule syntax.

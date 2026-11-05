@@ -173,6 +173,7 @@ public final class AnvilEnchantmentConfigGui {
                 .listEditor("enchantment_blacklist", VisualRuleEditors::enchantments)
                 .listEditor("disabled_enchantments", VisualRuleEditors::disabled)
                 .listEditor("smelter_multipliers", VisualRuleEditors::smelter)
+                .listEditor("leech_effects", VisualRuleEditors::effects)
                 .listEditor("omni_force_drop", VisualRuleEditors::blocks)
                 .build();
     }
