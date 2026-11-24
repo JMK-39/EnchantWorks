@@ -1,3 +1,7 @@
+2026年11月24日 — 26.11.24 — Configuration directory / 配置目录
+- Anvil and enchantment configuration moves to `config/kineticcore/enchantworks/anvilenchantments.toml`. The legacy file migrates automatically without replacing an existing destination. Requires KineticCore 26.11.24.
+- 铁砧与附魔配置归档至 `config/kineticcore/enchantworks/anvilenchantments.toml`，自动迁移旧文件且不覆盖已有新文件；需要 KineticCore 26.11.24。
+
 2026年10月26日 — 26.10.26 — Clearer editors / 更清晰的编辑界面
 - The rule editor is a form: target items show as icons with their names, the enchantment and multiplier rows follow, and the Choose buttons are as wide as their labels.
 - 规则编辑页改为表单：目标物品以图标加名称显示，其后是附魔或倍率行，“选择”按钮缩短为文字所需宽度。

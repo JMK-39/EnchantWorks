@@ -17,7 +17,7 @@ Enchant Works combines configurable anvil rules, enchantment filters, five custo
 | 1.21.1 | NeoForge 21.1+ | 21 |
 | 26.1.2 | NeoForge 26.1.2+ | 25 |
 
-Install on both client and server with matching KineticCore: **26.10.10.1+ on every supported version**. Enchantments are data-driven from 1.21 onward.
+Install on both client and server with matching KineticCore: **26.11.24+ on every supported version**. Enchantments are data-driven from 1.21 onward.
 
 [Detailed tutorial](https://github.com/JMK-39/EnchantWorks/wiki/Tutorial) · [Changelog](CHANGELOG.md)
 
@@ -38,6 +38,16 @@ Install on both client and server with matching KineticCore: **26.10.10.1+ on ev
 | 1.21.1 | NeoForge 21.1+ | 21 |
 | 26.1.2 | NeoForge 26.1.2+ | 25 |
 
-客户端与服务端均需安装，并使用对应版本的 KineticCore：**所有支持版本均为 26.10.10.1+**。1.21 起附魔采用数据驱动。
+客户端与服务端均需安装，并使用对应版本的 KineticCore：**所有支持版本均为 26.11.24+**。1.21 起附魔采用数据驱动。
 
 [详细使用教程](https://github.com/JMK-39/EnchantWorks/wiki/使用教程) · [更新日志](CHANGELOG.md)
+
+## Configuration files / 配置文件
+
+Requires KineticCore 26.11.24 or newer. Configuration files are grouped under `config/kineticcore/enchantworks/`. Old files migrate automatically before loading; an existing new file wins and the conflicting old file is preserved.
+
+需要 KineticCore 26.11.24 或更新版本。配置统一归档在 `config/kineticcore/enchantworks/`；首次读取前自动迁移旧文件，已有新文件优先，并保留发生冲突的旧文件。
+
+| Old path below `config/kineticcore/` / 旧相对路径 | New filename / 新文件名 |
+| --- | --- |
+| `anvilenchantments.toml` | `anvilenchantments.toml` |

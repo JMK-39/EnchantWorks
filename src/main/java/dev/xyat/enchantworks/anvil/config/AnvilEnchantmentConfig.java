@@ -8,6 +8,7 @@ import dev.xyat.enchantworks.EnchantWorks;
 import dev.xyat.kineticcore.api.registry.KineticRegistries;
 import dev.xyat.kineticcore.api.resource.KineticResourceIds;
 import dev.xyat.kineticcore.api.runtime.KineticPlatform;
+import dev.xyat.kineticcore.api.runtime.KineticPaths;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
@@ -23,7 +24,7 @@ import java.nio.file.Path;
 import java.util.*;
 
 public class AnvilEnchantmentConfig {
-    private static final Path CONFIG_DIR = KineticPlatform.configDirectory().resolve("kineticcore");
+    private static final Path CONFIG_DIR = KineticPlatform.configDirectory().resolve("kineticcore/enchantworks");
     private static final Path CONFIG_PATH = CONFIG_DIR.resolve("anvilenchantments.toml");
     private static CommentedFileConfig configData;
 
@@ -84,6 +85,7 @@ public class AnvilEnchantmentConfig {
     private static final List<BlockTargetMatcher> OMNI_TOOL_FORCE_DROP_BLOCK_CACHE = new ArrayList<>();
 
     public static void load() {
+        KineticPaths.migrateConfigFile("kineticcore/anvilenchantments.toml", "kineticcore/enchantworks/anvilenchantments.toml");
         try {
             if (!Files.exists(CONFIG_DIR)) Files.createDirectories(CONFIG_DIR);
             Config old = Config.inMemory();
