@@ -42,6 +42,8 @@ Install on both client and server with matching KineticCore: **26.11.24+ on ever
 
 附魔工坊整合可配置的铁砧规则、附魔组合过滤、五种自定义附魔，以及无限和引雷附魔的扩展。
 
+<a name="zh-walkthrough"></a>
+
 ### 调整「第六感」的探测半径
 
 在客户端设置里搜索「探测半径」，把 32 改为 48 并保存。本次实录也核对了运行中的设置，第六感的扫描半径已变成 48 格。
