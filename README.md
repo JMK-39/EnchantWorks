@@ -6,6 +6,21 @@
 
 Enchant Works combines configurable anvil rules, enchantment filters, five custom enchantments and extensions to Infinity and Channeling.
 
+### Adjust the Sixth Sense detection radius
+
+Search the client settings for the detection radius. Change 32 to 48 and save. The running client now uses 48 blocks for the Sixth Sense scan radius.
+
+![Searching the Sixth Sense settings, changing the radius from 32 blocks to 48 and saving it](https://raw.githubusercontent.com/wiki/JMK-39/EnchantWorks/media/tutorials-20261126/en.gif)
+
+<details>
+<summary>Full walkthrough with Mandarin narration</summary>
+
+https://github.com/user-attachments/assets/03fb616a-304a-4ce3-badc-5157cf27ae7f
+
+</details>
+
+[Editor guide](https://github.com/JMK-39/EnchantWorks/wiki/Tutorial)
+
 - Control anvil level limits, prior-work penalties, renaming costs and fixed-base XP costs.
 - Allow or deny item/enchantment combinations and disable selected enchantments.
 - Use Smelter, Leech, Sixth Sense, Enlightenment and Omni Tool for equipment progression.
@@ -26,6 +41,21 @@ Install on both client and server with matching KineticCore: **26.11.24+ on ever
 ## 简体中文
 
 附魔工坊整合可配置的铁砧规则、附魔组合过滤、五种自定义附魔，以及无限和引雷附魔的扩展。
+
+### 调整「第六感」的探测半径
+
+在客户端设置里搜索「探测半径」，把 32 改为 48 并保存。本次实录也核对了运行中的设置，第六感的扫描半径已变成 48 格。
+
+![查找第六感探测半径、把 32 格改为 48 格并保存的实录](https://raw.githubusercontent.com/wiki/JMK-39/EnchantWorks/media/tutorials-20261126/zh.gif)
+
+<details>
+<summary>播放完整普通话讲解</summary>
+
+https://github.com/user-attachments/assets/03fb616a-304a-4ce3-badc-5157cf27ae7f
+
+</details>
+
+[编辑器使用指南](https://github.com/JMK-39/EnchantWorks/wiki/%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B)
 
 - 调整铁砧等级限制、累积维修惩罚、改名费用和固定基准经验计费。
 - 允许或禁止指定物品与附魔组合，并禁用指定附魔。
